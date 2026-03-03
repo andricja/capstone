@@ -50,7 +50,7 @@ export default function RenterDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Renter Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Renter Dashboard</h1>
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
@@ -65,7 +65,7 @@ export default function RenterDashboard() {
 
       {/* Period Filter */}
       <div className="flex items-center gap-2 mb-6">
-        <span className="text-sm font-medium text-gray-500 mr-2">Period:</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mr-2">Period:</span>
         {['today', 'weekly', 'monthly', 'yearly'].map((p) => (
           <button
             key={p}
@@ -73,7 +73,7 @@ export default function RenterDashboard() {
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
               period === p
                 ? 'bg-green-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
             {p}
@@ -83,8 +83,8 @@ export default function RenterDashboard() {
 
       {/* Row 1: Rental Requests (bar) + Spending (line) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Rental Requests</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Rental Requests</h2>
           {rentalChart.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={rentalChart} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -103,8 +103,8 @@ export default function RenterDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Spending</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Spending</h2>
           {spendingChart.some((m) => m.spending > 0) ? (
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={spendingChart} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -124,8 +124,8 @@ export default function RenterDashboard() {
 
       {/* Row 2: Top Equipment (horizontal bar) + Rental Status (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">Top Equipment by Spending</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Top Equipment by Spending</h2>
           {topEquipment.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={topEquipment} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
@@ -143,8 +143,8 @@ export default function RenterDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">Rental Request Status</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Rental Request Status</h2>
           {rentalStatusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -164,8 +164,8 @@ export default function RenterDashboard() {
 
       {/* Row 3: Category Distribution (pie) + Payment Methods (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">Equipment Categories Rented</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Equipment Categories Rented</h2>
           {categoryDistribution.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -182,8 +182,8 @@ export default function RenterDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Payment Methods</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Payment Methods</h2>
           {paymentData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -203,16 +203,16 @@ export default function RenterDashboard() {
 
       {/* Recent rentals */}
       {data?.recent_rentals?.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border">
-          <div className="px-6 py-4 border-b">
-            <h2 className="font-semibold text-gray-900">Recent Rentals</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+          <div className="px-6 py-4 border-b dark:border-gray-700">
+            <h2 className="font-semibold text-gray-900 dark:text-white">Recent Rentals</h2>
           </div>
-          <div className="divide-y">
+          <div className="divide-y dark:divide-gray-700">
             {data.recent_rentals.map((r) => (
               <div key={r.id} className="px-6 py-4 flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-gray-900">{r.equipment?.name}</p>
-                  <p className="text-sm text-gray-500">{fmtDate(r.start_date)}{r.rental_days > 1 ? ` — ${fmtDate(r.end_date)}` : ''}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{r.equipment?.name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{fmtDate(r.start_date)}{r.rental_days > 1 ? ` — ${fmtDate(r.end_date)}` : ''}</p>
                 </div>
                 <StatusBadge status={r.status} />
               </div>
@@ -226,16 +226,17 @@ export default function RenterDashboard() {
 
 function StatCard({ icon, label, value, color }) {
   const colors = {
-    yellow: 'bg-yellow-50 text-yellow-600',
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    purple: 'bg-purple-50 text-purple-600',
+    yellow: { bg: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400', border: 'border-l-yellow-500' },
+    blue:   { bg: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',     border: 'border-l-blue-500' },
+    green:  { bg: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400',   border: 'border-l-green-500' },
+    purple: { bg: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400', border: 'border-l-purple-500' },
   };
+  const c = colors[color] || colors.green;
   return (
-    <div className="bg-white rounded-xl shadow-sm border p-5">
-      <div className={`inline-flex p-2 rounded-lg text-xl ${colors[color]}`}>{icon}</div>
-      <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
-      <p className="text-sm text-gray-500">{label}</p>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${c.border} p-5 transition-colors`}>
+      <div className={`inline-flex p-2 rounded-lg text-xl ${c.bg}`}>{icon}</div>
+      <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{value}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
     </div>
   );
 }

@@ -48,20 +48,20 @@ export default function AdminReports() {
     {
       key: 'id',
       label: 'Receipt No.',
-      render: (row) => <span className="font-mono text-xs text-gray-500">RCP-{String(row.id).padStart(5, '0')}</span>,
+      render: (row) => <span className="font-mono text-xs text-gray-500 dark:text-gray-400">RCP-{String(row.id).padStart(5, '0')}</span>,
       sortValue: (row) => row.id,
     },
     {
       key: 'approved_at',
       label: 'Approved Date',
-      render: (row) => <span className="text-gray-600 text-sm">{row.approved_at ? new Date(row.approved_at).toLocaleDateString() : '—'}</span>,
+      render: (row) => <span className="text-gray-600 dark:text-gray-400 text-sm">{row.approved_at ? new Date(row.approved_at).toLocaleDateString() : '—'}</span>,
     },
     {
       key: 'owner.name',
       label: 'Owner',
       render: (row) => (
         <div>
-          <p className="font-medium text-gray-900">{row.owner?.name ?? '—'}</p>
+          <p className="font-medium text-gray-900 dark:text-white">{row.owner?.name ?? '—'}</p>
           <p className="text-xs text-gray-400">{row.owner?.email ?? ''}</p>
         </div>
       ),
@@ -74,10 +74,10 @@ export default function AdminReports() {
           {row.image ? (
             <img src={`/storage/${row.image}`} alt={row.name} className="w-8 h-8 rounded object-cover" />
           ) : (
-            <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-sm text-gray-300">🚜</div>
+            <div className="w-8 h-8 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-sm text-gray-300">🚜</div>
           )}
           <div>
-            <p className="font-medium text-gray-900">{row.name}</p>
+            <p className="font-medium text-gray-900 dark:text-white">{row.name}</p>
             <p className="text-xs text-gray-400 capitalize">{row.category} • {row.location}</p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function AdminReports() {
       key: 'daily_rate',
       label: 'Daily Rate',
       align: 'right',
-      render: (row) => <span className="text-gray-600">₱{parseFloat(row.daily_rate).toLocaleString()}</span>,
+      render: (row) => <span className="text-gray-600 dark:text-gray-400">₱{parseFloat(row.daily_rate).toLocaleString()}</span>,
       sortValue: (row) => parseFloat(row.daily_rate),
     },
     {
@@ -112,7 +112,7 @@ export default function AdminReports() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <BarChart3 className="w-7 h-7 text-green-600" />
-          <h1 className="text-2xl font-bold text-gray-900">Revenue Reports</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Revenue Reports</h1>
         </div>
         <button onClick={handleExportCsv}
           className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
@@ -121,11 +121,11 @@ export default function AdminReports() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border p-4 mb-6 flex flex-wrap items-end gap-3">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4 mb-6 flex flex-wrap items-end gap-3 transition-colors">
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Time Period</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Time Period</label>
           <select value={filter} onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200">
             <option value="day">Today</option>
             <option value="week">This Week</option>
             <option value="month">This Month</option>
@@ -136,14 +136,14 @@ export default function AdminReports() {
         {filter === 'custom' && (
           <>
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Start Date</label>
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Start Date</label>
               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" />
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">End Date</label>
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">End Date</label>
               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" />
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200" />
             </div>
           </>
         )}
@@ -153,31 +153,31 @@ export default function AdminReports() {
       {/* Summary */}
       {data?.summary && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-xl shadow-sm border p-5 flex items-center gap-4">
-            <div className="bg-green-50 p-3 rounded-lg">
-              <DollarSign className="w-6 h-6 text-green-600" />
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 border-l-green-500 p-5 flex items-center gap-4 transition-colors">
+            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+              <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-green-700">₱{parseFloat(data.summary.total_revenue).toLocaleString()}</p>
-              <p className="text-sm text-gray-500">Total Revenue</p>
+              <p className="text-2xl font-bold text-green-700 dark:text-green-400">₱{parseFloat(data.summary.total_revenue).toLocaleString()}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border p-5 flex items-center gap-4">
-            <div className="bg-blue-50 p-3 rounded-lg">
-              <Tractor className="w-6 h-6 text-blue-600" />
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 border-l-blue-500 p-5 flex items-center gap-4 transition-colors">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+              <Tractor className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-blue-600">{data.summary.total_approvals}</p>
-              <p className="text-sm text-gray-500">Equipment Approved</p>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{data.summary.total_approvals}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Equipment Approved</p>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border p-5 flex items-center gap-4">
-            <div className="bg-amber-50 p-3 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-amber-600" />
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 border-l-amber-500 p-5 flex items-center gap-4 transition-colors">
+            <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
+              <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-amber-600">₱{parseFloat(data.summary.average_fee).toLocaleString()}</p>
-              <p className="text-sm text-gray-500">Average Fee</p>
+              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">₱{parseFloat(data.summary.average_fee).toLocaleString()}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Average Fee</p>
             </div>
           </div>
         </div>

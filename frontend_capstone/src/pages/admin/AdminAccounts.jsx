@@ -4,13 +4,14 @@ import DataTable from '../../components/DataTable';
 import { TableSkeleton } from '../../components/Skeleton';
 import StatusBadge from '../../components/StatusBadge';
 import { UserCheck, UserX, Users, Clock, ShieldCheck, ShieldX, X, Mail } from 'lucide-react';
+import { useToast } from '../../components/Toast';
 
 export default function AdminAccounts() {
   const [data, setData] = useState([]);
   const [stats, setStats] = useState(null);
   const [filter, setFilter] = useState('email_verified');
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
+  const toast = useToast();
   const [selected, setSelected] = useState(null);
   const [rejectModal, setRejectModal] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
@@ -34,12 +35,12 @@ export default function AdminAccounts() {
     setActionLoading(true);
     try {
       const res = await api.patch(`/admin/accounts/${id}/approve`);
-      setMessage(res.data.message);
+      toast.success(res.data.message);
       fetchAccounts(filter);
       fetchStats();
       if (selected?.id === id) setSelected(null);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to approve.');
+      toast.error(err.response?.data?.message || 'Failed to approve.');
     } finally {
       setActionLoading(false);
     }
@@ -56,13 +57,13 @@ export default function AdminAccounts() {
     setActionLoading(true);
     try {
       const res = await api.patch(`/admin/accounts/${rejectModal.id}/reject`, { reason: rejectReason });
-      setMessage(res.data.message);
+      toast.success(res.data.message);
       fetchAccounts(filter);
       fetchStats();
       setRejectModal(null);
       if (selected?.id === rejectModal.id) setSelected(null);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to reject.');
+      toast.error(err.response?.data?.message || 'Failed to reject.');
     } finally {
       setActionLoading(false);
     }
@@ -89,10 +90,10 @@ export default function AdminAccounts() {
   };
 
   const statCards = [
-    { label: 'Pending Verification', value: stats?.pending ?? 0, icon: <Clock className="w-5 h-5" />, color: 'bg-yellow-50 text-yellow-600 ring-yellow-200' },
-    { label: 'Awaiting Approval', value: stats?.email_verified ?? 0, icon: <Mail className="w-5 h-5" />, color: 'bg-blue-50 text-blue-600 ring-blue-200' },
-    { label: 'Approved', value: stats?.approved ?? 0, icon: <ShieldCheck className="w-5 h-5" />, color: 'bg-green-50 text-green-600 ring-green-200' },
-    { label: 'Rejected', value: stats?.rejected ?? 0, icon: <ShieldX className="w-5 h-5" />, color: 'bg-red-50 text-red-600 ring-red-200' },
+    { label: 'Pending Verification', value: stats?.pending ?? 0, icon: <Clock className="w-5 h-5" />, color: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 ring-yellow-200 dark:ring-yellow-800', border: 'border-l-yellow-500' },
+    { label: 'Awaiting Approval', value: stats?.email_verified ?? 0, icon: <Mail className="w-5 h-5" />, color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 ring-blue-200 dark:ring-blue-800', border: 'border-l-blue-500' },
+    { label: 'Approved', value: stats?.approved ?? 0, icon: <ShieldCheck className="w-5 h-5" />, color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 ring-green-200 dark:ring-green-800', border: 'border-l-green-500' },
+    { label: 'Rejected', value: stats?.rejected ?? 0, icon: <ShieldX className="w-5 h-5" />, color: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 ring-red-200 dark:ring-red-800', border: 'border-l-red-500' },
   ];
 
   const columns = [
@@ -105,8 +106,8 @@ export default function AdminAccounts() {
             {row.name?.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-medium text-gray-900">{row.name}</p>
-            <p className="text-xs text-gray-500">{row.email}</p>
+            <p className="font-medium text-gray-900 dark:text-white">{row.name}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{row.email}</p>
           </div>
         </div>
       ),
@@ -116,7 +117,7 @@ export default function AdminAccounts() {
       label: 'Role',
       align: 'center',
       render: (row) => (
-        <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+        <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
           {row.role}
         </span>
       ),
@@ -135,7 +136,7 @@ export default function AdminAccounts() {
       key: 'created_at',
       label: 'Registered',
       render: (row) => (
-        <span className="text-gray-500 text-xs">
+        <span className="text-gray-500 dark:text-gray-400 text-xs">
           {new Date(row.created_at).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}
         </span>
       ),
@@ -175,19 +176,19 @@ export default function AdminAccounts() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <Users className="w-7 h-7 text-green-600" />
-        <h1 className="text-2xl font-bold text-gray-900">Account Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Management</h1>
       </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {statCards.map((card) => (
-          <div key={card.label} className="bg-white rounded-xl shadow-sm border p-4 flex items-center gap-3">
+          <div key={card.label} className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${card.border} p-4 flex items-center gap-3 transition-colors`}>
             <div className={`${card.color} p-2.5 rounded-lg ring-1`}>
               {card.icon}
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-              <p className="text-xs text-gray-500">{card.label}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{card.value}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{card.label}</p>
             </div>
           </div>
         ))}
@@ -208,7 +209,7 @@ export default function AdminAccounts() {
             className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
               filter === btn.value
                 ? 'bg-green-600 text-white border-green-600'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >
             {btn.label}
@@ -217,12 +218,6 @@ export default function AdminAccounts() {
       </div>
 
       {/* Feedback message */}
-      {message && (
-        <div className="mb-4 px-4 py-3 rounded-lg text-sm bg-green-50 text-green-700">
-          {message}
-        </div>
-      )}
-
       {/* Table */}
       {loading ? (
         <TableSkeleton rows={8} cols={5} />
@@ -240,15 +235,15 @@ export default function AdminAccounts() {
       {/* ── Detail Modal ── */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-6 py-4 border-b">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xl">
                   {selected.name?.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">{selected.name}</h2>
-                  <p className="text-sm text-gray-500">{selected.email}</p>
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">{selected.name}</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{selected.email}</p>
                 </div>
               </div>
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 p-1">
@@ -269,11 +264,11 @@ export default function AdminAccounts() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Role</p>
-                  <p className="text-gray-700 capitalize">{selected.role}</p>
+                  <p className="text-gray-700 dark:text-gray-300 capitalize">{selected.role}</p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Email Verified</p>
-                  <p className="text-gray-700">{selected.email_verified_at ? 'Yes' : 'No'}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{selected.email_verified_at ? 'Yes' : 'No'}</p>
                 </div>
               </div>
 
@@ -284,7 +279,7 @@ export default function AdminAccounts() {
                 </div>
               )}
 
-              <div className="flex items-center gap-2 flex-wrap pt-2 border-t">
+              <div className="flex items-center gap-2 flex-wrap pt-2 border-t dark:border-gray-700">
                 {(selected.account_status === 'email_verified' || selected.account_status === 'rejected') && (
                   <button
                     onClick={(e) => handleApprove(selected.id, e)}
@@ -312,32 +307,32 @@ export default function AdminAccounts() {
       {/* ── Reject Reason Modal ── */}
       {rejectModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setRejectModal(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-6 py-4 border-b">
-              <h2 className="text-lg font-bold text-gray-900">Reject Account</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Reject Account</h2>
               <button onClick={() => setRejectModal(null)} className="text-gray-400 hover:text-gray-600 p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-sm text-gray-600">
-                Rejecting <span className="font-semibold text-gray-900">{rejectModal.name}</span> ({rejectModal.email}).
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Rejecting <span className="font-semibold text-gray-900 dark:text-white">{rejectModal.name}</span> ({rejectModal.email}).
                 The user will receive an email with the reason below.
               </p>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Reason (optional)</label>
                 <textarea
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   rows={3}
                   placeholder="Enter the reason for rejection..."
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
+                  className="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setRejectModal(null)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
                 >
                   Cancel
                 </button>

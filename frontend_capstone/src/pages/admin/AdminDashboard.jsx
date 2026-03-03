@@ -58,7 +58,7 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Admin Dashboard</h1>
 
       {/* Overview stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
 
       {/* Period Filter */}
       <div className="flex items-center gap-2 mb-6">
-        <span className="text-sm font-medium text-gray-500 mr-2">Period:</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mr-2">Period:</span>
         {['today', 'weekly', 'monthly', 'yearly'].map((p) => (
           <button
             key={p}
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
               period === p
                 ? 'bg-green-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
             {p}
@@ -92,8 +92,8 @@ export default function AdminDashboard() {
 
       {/* Row 1: Rental Requests (bar) + Revenue (line) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Rental Requests</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Rental Requests</h2>
           {rentalChart.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={rentalChart} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -112,8 +112,8 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Revenue</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Revenue</h2>
           {revenueChart.some((m) => m.revenue > 0) ? (
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={revenueChart} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -133,8 +133,8 @@ export default function AdminDashboard() {
 
       {/* Row 2: User Registrations (bar) + Top Equipment Revenue (horizontal bar) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} User Registrations</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} User Registrations</h2>
           {usersChart.some((u) => u.renters > 0 || u.owners > 0) ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={usersChart} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -152,8 +152,8 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">Top Equipment by Revenue</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Top Equipment by Revenue</h2>
           {topEquipment.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={topEquipment} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
@@ -174,8 +174,8 @@ export default function AdminDashboard() {
 
       {/* Row 3: Equipment Status (pie) + Rental Status (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">Equipment Status</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Equipment Status</h2>
           {equipmentStatusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -192,8 +192,8 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">Rental Request Status</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Rental Request Status</h2>
           {rentalStatusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -213,8 +213,8 @@ export default function AdminDashboard() {
 
       {/* Row 4: Category Distribution (pie) + Payment Methods (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">Equipment by Category</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Equipment by Category</h2>
           {categoryDistribution.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -231,8 +231,8 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Payment Methods</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Payment Methods</h2>
           {paymentData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -272,12 +272,16 @@ function PendingCard({ count, label, color }) {
   );
 }
 
-function StatCard({ icon, label, value }) {
+function StatCard({ icon, label, value, color = 'green' }) {
+  const borderColors = {
+    green: 'border-l-green-500', blue: 'border-l-blue-500', amber: 'border-l-amber-500',
+    purple: 'border-l-purple-500', red: 'border-l-red-500', yellow: 'border-l-yellow-500',
+  };
   return (
-    <div className="bg-white rounded-xl shadow-sm border p-4 text-center">
-      <div className="text-xl text-gray-400 flex justify-center mb-1">{icon}</div>
-      <p className="text-xl font-bold text-gray-900">{value}</p>
-      <p className="text-xs text-gray-500">{label}</p>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${borderColors[color] || borderColors.green} p-4 text-center transition-colors`}>
+      <div className="text-xl text-gray-400 dark:text-gray-500 flex justify-center mb-1">{icon}</div>
+      <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
     </div>
   );
 }

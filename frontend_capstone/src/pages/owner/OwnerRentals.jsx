@@ -2,12 +2,13 @@ import { useEffect, useState, useMemo } from 'react';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { ListPageSkeleton } from '../../components/Skeleton';
-import { Check, X, Ruler, Clock, Calendar, Truck, MapPin, LayoutGrid, Table, Banknote } from 'lucide-react';
+import { Check, X, Ruler, Clock, Calendar, Truck, MapPin, LayoutGrid, Table, Banknote, Archive } from 'lucide-react';
+import { useToast } from '../../components/Toast';
 
 export default function OwnerRentals() {
   const [allData, setAllData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
+  const toast = useToast();
   const [proofImage, setProofImage] = useState(null);
   const [viewMode, setViewMode] = useState('card'); // 'card' | 'table'
   const [statusFilter, setStatusFilter] = useState('all');
@@ -36,10 +37,22 @@ export default function OwnerRentals() {
     if (!confirm(confirmMsg)) return;
     try {
       await api.patch(`/owner/rental-requests/${id}/${action}`);
-      setMessage(`Rental request ${action}d.`);
+      toast.success(`Rental request ${action}d.`);
       fetchAll();
     } catch (err) {
-      setMessage(err.response?.data?.message || `Failed to ${action} request.`);
+      toast.error(err.response?.data?.message || `Failed to ${action} request.`);
+    }
+  };
+
+  const handleArchive = async (id, e) => {
+    e?.stopPropagation();
+    if (!confirm('Archive this rental request?')) return;
+    try {
+      await api.patch(`/owner/archived/rentals/${id}`);
+      toast.success('Rental archived.');
+      fetchAll();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to archive.');
     }
   };
 
@@ -95,10 +108,10 @@ export default function OwnerRentals() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Rental Requests</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Rental Requests</h1>
         <button
           onClick={() => { setViewMode(viewMode === 'card' ? 'table' : 'card'); setPage(1); }}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
         >
           {viewMode === 'card' ? <><Table className="w-4 h-4" /> Table View</> : <><LayoutGrid className="w-4 h-4" /> Card View</>}
         </button>
@@ -121,7 +134,7 @@ export default function OwnerRentals() {
                   : f.key === 'rejected' ? 'bg-red-500 text-white shadow-sm'
                   : f.key === 'forwarded' ? 'bg-blue-600 text-white shadow-sm'
                   : 'bg-green-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
             {f.label}
@@ -129,83 +142,77 @@ export default function OwnerRentals() {
         ))}
       </div>
 
-      {message && (
-        <div className={`mb-4 px-4 py-3 rounded-lg text-sm ${message.includes('Failed') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
-          {message}
-        </div>
-      )}
-
       {allData.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">No rental requests yet.</div>
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">No rental requests yet.</div>
       ) : viewMode === 'card' ? (
         /* ══════════ CARD VIEW ══════════ */
         processed.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">No {statusFilter !== 'all' ? statusFilter : ''} rental requests found.</div>
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">No {statusFilter !== 'all' ? statusFilter : ''} rental requests found.</div>
         ) : (
         <div className="space-y-4">
           {processed.map((r) => (
-            <div key={r.id} className="bg-white rounded-xl shadow-sm border p-5">
+            <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{r.equipment?.name}</h3>
-                  <p className="text-sm text-gray-500 capitalize">{r.equipment?.category} • {r.equipment?.location}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">{r.equipment?.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{r.equipment?.category} • {r.equipment?.location}</p>
                 </div>
                 <StatusBadge status={r.status} />
               </div>
 
               {/* Renter Information */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Renter Information</h4>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Renter Information</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
-                  <div><span className="text-gray-500">Name:</span> <span className="font-medium">{r.renter?.name}</span></div>
-                  <div><span className="text-gray-500">Email:</span> <span className="font-medium">{r.renter?.email}</span></div>
-                  <div><span className="text-gray-500">Phone:</span> <span className="font-medium">{r.contact_number}</span></div>
+                  <div><span className="text-gray-500 dark:text-gray-400">Name:</span> <span className="font-medium dark:text-gray-200">{r.renter?.name}</span></div>
+                  <div><span className="text-gray-500 dark:text-gray-400">Email:</span> <span className="font-medium dark:text-gray-200">{r.renter?.email}</span></div>
+                  <div><span className="text-gray-500 dark:text-gray-400">Phone:</span> <span className="font-medium dark:text-gray-200">{r.contact_number}</span></div>
                 </div>
               </div>
 
               {/* Farm & Rental Details */}
-              <div className="bg-green-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Farm & Rental Details</h4>
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Farm & Rental Details</h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                   <div className="flex items-start gap-1.5">
                     <Ruler className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Farm Size</span>
-                      <span className="font-semibold text-gray-900">{parseFloat(r.farm_size_sqm || 0).toLocaleString()} sqm</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Farm Size</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{parseFloat(r.farm_size_sqm || 0).toLocaleString()} sqm</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <Clock className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Est. Hours</span>
-                      <span className="font-semibold text-gray-900">{parseFloat(r.estimated_hours || 0)} hrs</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Est. Hours</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{parseFloat(r.estimated_hours || 0)} hrs</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <Calendar className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Rental Days</span>
-                      <span className="font-semibold text-gray-900">{r.rental_days} day(s)</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Rental Days</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{r.rental_days} day(s)</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <Calendar className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Period</span>
-                      <span className="font-semibold text-gray-900">{fmtDate(r.start_date)}{r.rental_days > 1 ? ` — ${fmtDate(r.end_date)}` : ''}</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Period</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{fmtDate(r.start_date)}{r.rental_days > 1 ? ` — ${fmtDate(r.end_date)}` : ''}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Delivery Details */}
-              <div className="bg-blue-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Delivery Details</h4>
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Delivery Details</h4>
                 <div className="flex items-start gap-1.5 text-sm">
                   <Truck className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
                   <div>
-                    <span className="font-medium text-gray-900">{r.delivery_address}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{r.delivery_address}</span>
                     {r.latitude && r.longitude && (
                       <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
                         <MapPin className="w-3 h-3" /> {r.latitude}, {r.longitude}
@@ -216,28 +223,28 @@ export default function OwnerRentals() {
               </div>
 
               {/* Cost Breakdown */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Cost Breakdown</h4>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cost Breakdown</h4>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Base Cost (₱{fmt(r.equipment?.daily_rate)} × {r.rental_days} day{r.rental_days > 1 ? 's' : ''})</span>
-                    <span className="font-medium">₱{fmt(r.base_cost)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Base Cost (₱{fmt(r.equipment?.daily_rate)} × {r.rental_days} day{r.rental_days > 1 ? 's' : ''})</span>
+                    <span className="font-medium dark:text-gray-200">₱{fmt(r.base_cost)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Delivery Fee</span>
-                    <span className="font-medium">₱{fmt(r.delivery_fee)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Delivery Fee</span>
+                    <span className="font-medium dark:text-gray-200">₱{fmt(r.delivery_fee)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Service Charge (5%)</span>
-                    <span className="font-medium">₱{fmt(r.service_charge)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Service Charge (5%)</span>
+                    <span className="font-medium dark:text-gray-200">₱{fmt(r.service_charge)}</span>
                   </div>
-                  <div className="border-t pt-2 mt-2 flex justify-between">
-                    <span className="font-semibold text-gray-700">Total Cost</span>
+                  <div className="border-t dark:border-gray-600 pt-2 mt-2 flex justify-between">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Total Cost</span>
                     <span className="font-bold text-green-700 text-base">₱{fmt(r.total_cost)}</span>
                   </div>
                   <div className="flex items-center gap-1.5 pt-2">
                     <Banknote className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-500">Payment:</span>
+                    <span className="text-gray-500 dark:text-gray-400">Payment:</span>
                     <span className={`font-medium px-2 py-0.5 rounded-full text-xs ${
                       r.payment_method === 'gcash' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
                     }`}>{r.payment_method === 'gcash' ? 'GCash' : 'COD'}</span>
@@ -250,46 +257,52 @@ export default function OwnerRentals() {
               </div>
 
               {/* Action buttons */}
-              {r.status === 'forwarded' && (
-                <div className="flex gap-2">
-                  <button onClick={() => handleAction(r.id, 'approve')}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
-                    <Check className="w-4 h-4" /> Approve
-                  </button>
-                  <button onClick={() => handleAction(r.id, 'reject')}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 flex items-center gap-1">
-                    <X className="w-4 h-4" /> Reject
-                  </button>
-                </div>
-              )}
+              <div className="flex gap-2">
+                {r.status === 'forwarded' && (
+                  <>
+                    <button onClick={() => handleAction(r.id, 'approve')}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
+                      <Check className="w-4 h-4" /> Approve
+                    </button>
+                    <button onClick={() => handleAction(r.id, 'reject')}
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 flex items-center gap-1">
+                      <X className="w-4 h-4" /> Reject
+                    </button>
+                  </>
+                )}
+                <button onClick={(e) => handleArchive(r.id, e)}
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200">
+                  <Archive className="w-4 h-4" /> Archive
+                </button>
+              </div>
             </div>
           ))}
         </div>
         )
       ) : (
         /* ══════════ TABLE VIEW ══════════ */
-        <div className="bg-white rounded-xl shadow-sm border">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
           {/* Toolbar */}
-          <div className="p-4 border-b flex flex-wrap items-center justify-between gap-3">
+          <div className="p-4 border-b dark:border-gray-700 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm">
-              <label className="text-gray-500">Show</label>
+              <label className="text-gray-500 dark:text-gray-400">Show</label>
               <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}
-                className="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                className="border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200">
                 {[5, 10, 25, 50].map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
-              <span className="text-gray-500">entries</span>
+              <span className="text-gray-500 dark:text-gray-400">entries</span>
             </div>
             <input
               type="text" placeholder="Search requests..."
               value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none w-64"
+              className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none w-64 dark:bg-gray-700 dark:text-gray-200"
             />
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                   {[
                     ['id', '#'],
@@ -301,52 +314,56 @@ export default function OwnerRentals() {
                     ['status', 'Status'],
                   ].map(([col, label]) => (
                     <th key={col} onClick={() => toggleSort(col)}
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:text-gray-700 select-none whitespace-nowrap">
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 select-none whitespace-nowrap">
                       {label}{sortIcon(col)}
                     </th>
                   ))}
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y dark:divide-gray-700">
                 {paginated.length === 0 ? (
                   <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-400">No matching requests.</td></tr>
                 ) : paginated.map((r) => (
-                  <tr key={r.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedRow(r)}>
+                  <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer" onClick={() => setSelectedRow(r)}>
                     <td className="px-4 py-3 font-mono text-gray-400">{r.id}</td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900">{r.equipment?.name}</p>
-                      <p className="text-xs text-gray-500 capitalize">{r.equipment?.category}</p>
+                      <p className="font-medium text-gray-900 dark:text-white">{r.equipment?.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{r.equipment?.category}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900">{r.renter?.name}</p>
-                      <p className="text-xs text-gray-500">{r.contact_number}</p>
+                      <p className="font-medium text-gray-900 dark:text-white">{r.renter?.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{r.contact_number}</p>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <p className="font-medium">{parseFloat(r.farm_size_sqm || 0).toLocaleString()} sqm</p>
-                      <p className="text-xs text-gray-500">{parseFloat(r.estimated_hours || 0)} hrs • {r.rental_days}d</p>
+                      <p className="font-medium dark:text-gray-200">{parseFloat(r.farm_size_sqm || 0).toLocaleString()} sqm</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{parseFloat(r.estimated_hours || 0)} hrs • {r.rental_days}d</p>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <p className="font-medium">{fmtDate(r.start_date)}</p>
-                      {r.rental_days > 1 && <p className="text-xs text-gray-500">to {fmtDate(r.end_date)}</p>}
+                      <p className="font-medium dark:text-gray-200">{fmtDate(r.start_date)}</p>
+                      {r.rental_days > 1 && <p className="text-xs text-gray-500 dark:text-gray-400">to {fmtDate(r.end_date)}</p>}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap font-bold text-green-700">₱{fmt(r.total_cost)}</td>
                     <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
                     <td className="px-4 py-3">
-                      {r.status === 'forwarded' ? (
-                        <div className="flex gap-1">
-                          <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'approve'); }}
-                            className="bg-green-600 text-white px-2.5 py-1 rounded text-xs font-medium hover:bg-green-700 flex items-center gap-0.5">
-                            <Check className="w-3 h-3" /> Approve
-                          </button>
-                          <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'reject'); }}
-                            className="bg-red-500 text-white px-2.5 py-1 rounded text-xs font-medium hover:bg-red-600 flex items-center gap-0.5">
-                            <X className="w-3 h-3" /> Reject
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-400">—</span>
-                      )}
+                      <div className="flex gap-1">
+                        {r.status === 'forwarded' ? (
+                          <>
+                            <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'approve'); }}
+                              className="bg-green-600 text-white px-2.5 py-1 rounded text-xs font-medium hover:bg-green-700 flex items-center gap-0.5">
+                              <Check className="w-3 h-3" /> Approve
+                            </button>
+                            <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'reject'); }}
+                              className="bg-red-500 text-white px-2.5 py-1 rounded text-xs font-medium hover:bg-red-600 flex items-center gap-0.5">
+                              <X className="w-3 h-3" /> Reject
+                            </button>
+                          </>
+                        ) : null}
+                        <button onClick={(e) => handleArchive(r.id, e)}
+                          className="flex items-center gap-0.5 px-2.5 py-1 rounded text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100">
+                          <Archive className="w-3 h-3" /> Archive
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -355,19 +372,19 @@ export default function OwnerRentals() {
           </div>
 
           {/* Pagination footer */}
-          <div className="px-4 py-3 border-t flex items-center justify-between text-sm text-gray-500">
+          <div className="px-4 py-3 border-t dark:border-gray-700 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <span>Showing {((page - 1) * perPage) + 1}–{Math.min(page * perPage, processed.length)} of {processed.length}</span>
             <div className="flex gap-1">
               <button disabled={page <= 1} onClick={() => setPage(page - 1)}
-                className="px-3 py-1 rounded border text-sm disabled:opacity-40 hover:bg-gray-50">Prev</button>
+                className="px-3 py-1 rounded border dark:border-gray-600 text-sm disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300">Prev</button>
               {Array.from({ length: totalPages }, (_, i) => (
                 <button key={i + 1} onClick={() => setPage(i + 1)}
-                  className={`px-3 py-1 rounded border text-sm ${page === i + 1 ? 'bg-green-600 text-white border-green-600' : 'hover:bg-gray-50'}`}>
+                  className={`px-3 py-1 rounded border dark:border-gray-600 text-sm ${page === i + 1 ? 'bg-green-600 text-white border-green-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300'}`}>
                   {i + 1}
                 </button>
               ))}
               <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}
-                className="px-3 py-1 rounded border text-sm disabled:opacity-40 hover:bg-gray-50">Next</button>
+                className="px-3 py-1 rounded border dark:border-gray-600 text-sm disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300">Next</button>
             </div>
           </div>
         </div>
@@ -378,8 +395,8 @@ export default function OwnerRentals() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setProofImage(null)}>
           <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setProofImage(null)}
-              className="absolute -top-3 -right-3 bg-white text-gray-600 rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-gray-100 text-lg font-bold z-10">&times;</button>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-xl">
+              className="absolute -top-3 -right-3 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-gray-100 dark:hover:bg-gray-600 text-lg font-bold z-10">&times;</button>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
               <div className="bg-blue-600 px-4 py-3 text-white text-sm font-semibold text-center">GCash Payment Proof</div>
               <div className="p-4">
                 <img src={proofImage} alt="Payment Proof" className="w-full rounded-lg" />
@@ -394,69 +411,69 @@ export default function OwnerRentals() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedRow(null)}>
           <div className="relative max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setSelectedRow(null)}
-              className="absolute top-3 right-3 bg-white text-gray-600 rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-gray-100 text-lg font-bold z-10">&times;</button>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-xl p-6">
+              className="absolute top-3 right-3 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-gray-100 dark:hover:bg-gray-600 text-lg font-bold z-10">&times;</button>
+            <div className="bg-white dark:bg-gray-800 dark:text-white rounded-2xl overflow-hidden shadow-xl p-6">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{selectedRow.equipment?.name}</h3>
-                  <p className="text-sm text-gray-500 capitalize">{selectedRow.equipment?.category} • {selectedRow.equipment?.location}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{selectedRow.equipment?.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{selectedRow.equipment?.category} • {selectedRow.equipment?.location}</p>
                 </div>
                 <StatusBadge status={selectedRow.status} />
               </div>
 
               {/* Renter Information */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Renter Information</h4>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Renter Information</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
-                  <div><span className="text-gray-500">Name:</span> <span className="font-medium">{selectedRow.renter?.name}</span></div>
-                  <div><span className="text-gray-500">Email:</span> <span className="font-medium">{selectedRow.renter?.email}</span></div>
-                  <div><span className="text-gray-500">Phone:</span> <span className="font-medium">{selectedRow.contact_number}</span></div>
+                  <div><span className="text-gray-500 dark:text-gray-400">Name:</span> <span className="font-medium dark:text-gray-200">{selectedRow.renter?.name}</span></div>
+                  <div><span className="text-gray-500 dark:text-gray-400">Email:</span> <span className="font-medium dark:text-gray-200">{selectedRow.renter?.email}</span></div>
+                  <div><span className="text-gray-500 dark:text-gray-400">Phone:</span> <span className="font-medium dark:text-gray-200">{selectedRow.contact_number}</span></div>
                 </div>
               </div>
 
               {/* Farm & Rental Details */}
-              <div className="bg-green-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Farm & Rental Details</h4>
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Farm & Rental Details</h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                   <div className="flex items-start gap-1.5">
                     <Ruler className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Farm Size</span>
-                      <span className="font-semibold text-gray-900">{parseFloat(selectedRow.farm_size_sqm || 0).toLocaleString()} sqm</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Farm Size</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{parseFloat(selectedRow.farm_size_sqm || 0).toLocaleString()} sqm</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <Clock className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Est. Hours</span>
-                      <span className="font-semibold text-gray-900">{parseFloat(selectedRow.estimated_hours || 0)} hrs</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Est. Hours</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{parseFloat(selectedRow.estimated_hours || 0)} hrs</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <Calendar className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Rental Days</span>
-                      <span className="font-semibold text-gray-900">{selectedRow.rental_days} day(s)</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Rental Days</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{selectedRow.rental_days} day(s)</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <Calendar className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-gray-500 block text-xs">Period</span>
-                      <span className="font-semibold text-gray-900">{fmtDate(selectedRow.start_date)}{selectedRow.rental_days > 1 ? ` — ${fmtDate(selectedRow.end_date)}` : ''}</span>
+                      <span className="text-gray-500 dark:text-gray-400 block text-xs">Period</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{fmtDate(selectedRow.start_date)}{selectedRow.rental_days > 1 ? ` — ${fmtDate(selectedRow.end_date)}` : ''}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Delivery Details */}
-              <div className="bg-blue-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Delivery Details</h4>
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Delivery Details</h4>
                 <div className="flex items-start gap-1.5 text-sm">
                   <Truck className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
                   <div>
-                    <span className="font-medium text-gray-900">{selectedRow.delivery_address}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{selectedRow.delivery_address}</span>
                     {selectedRow.latitude && selectedRow.longitude && (
                       <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
                         <MapPin className="w-3 h-3" /> {selectedRow.latitude}, {selectedRow.longitude}
@@ -467,28 +484,28 @@ export default function OwnerRentals() {
               </div>
 
               {/* Cost Breakdown */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Cost Breakdown</h4>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cost Breakdown</h4>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Base Cost (₱{fmt(selectedRow.equipment?.daily_rate)} × {selectedRow.rental_days} day{selectedRow.rental_days > 1 ? 's' : ''})</span>
-                    <span className="font-medium">₱{fmt(selectedRow.base_cost)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Base Cost (₱{fmt(selectedRow.equipment?.daily_rate)} × {selectedRow.rental_days} day{selectedRow.rental_days > 1 ? 's' : ''})</span>
+                    <span className="font-medium dark:text-gray-200">₱{fmt(selectedRow.base_cost)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Delivery Fee</span>
-                    <span className="font-medium">₱{fmt(selectedRow.delivery_fee)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Delivery Fee</span>
+                    <span className="font-medium dark:text-gray-200">₱{fmt(selectedRow.delivery_fee)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Service Charge (5%)</span>
-                    <span className="font-medium">₱{fmt(selectedRow.service_charge)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Service Charge (5%)</span>
+                    <span className="font-medium dark:text-gray-200">₱{fmt(selectedRow.service_charge)}</span>
                   </div>
-                  <div className="border-t pt-2 mt-2 flex justify-between">
-                    <span className="font-semibold text-gray-700">Total Cost</span>
+                  <div className="border-t dark:border-gray-600 pt-2 mt-2 flex justify-between">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Total Cost</span>
                     <span className="font-bold text-green-700 text-base">₱{fmt(selectedRow.total_cost)}</span>
                   </div>
                   <div className="flex items-center gap-1.5 pt-2">
                     <Banknote className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-500">Payment:</span>
+                    <span className="text-gray-500 dark:text-gray-400">Payment:</span>
                     <span className={`font-medium px-2 py-0.5 rounded-full text-xs ${
                       selectedRow.payment_method === 'gcash' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
                     }`}>{selectedRow.payment_method === 'gcash' ? 'GCash' : 'COD'}</span>
@@ -501,18 +518,24 @@ export default function OwnerRentals() {
               </div>
 
               {/* Action buttons */}
-              {selectedRow.status === 'forwarded' && (
-                <div className="flex gap-2">
-                  <button onClick={() => { handleAction(selectedRow.id, 'approve'); setSelectedRow(null); }}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
-                    <Check className="w-4 h-4" /> Approve
-                  </button>
-                  <button onClick={() => { handleAction(selectedRow.id, 'reject'); setSelectedRow(null); }}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 flex items-center gap-1">
-                    <X className="w-4 h-4" /> Reject
-                  </button>
-                </div>
-              )}
+              <div className="flex gap-2">
+                {selectedRow.status === 'forwarded' && (
+                  <>
+                    <button onClick={() => { handleAction(selectedRow.id, 'approve'); setSelectedRow(null); }}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
+                      <Check className="w-4 h-4" /> Approve
+                    </button>
+                    <button onClick={() => { handleAction(selectedRow.id, 'reject'); setSelectedRow(null); }}
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 flex items-center gap-1">
+                      <X className="w-4 h-4" /> Reject
+                    </button>
+                  </>
+                )}
+                <button onClick={(e) => { handleArchive(selectedRow.id, e); setSelectedRow(null); }}
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200">
+                  <Archive className="w-4 h-4" /> Archive
+                </button>
+              </div>
             </div>
           </div>
         </div>

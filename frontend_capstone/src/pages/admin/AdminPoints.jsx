@@ -4,13 +4,14 @@ import StatusBadge from '../../components/StatusBadge';
 import { TableSkeleton } from '../../components/Skeleton';
 import Pagination from '../../components/Pagination';
 import { Check, X } from 'lucide-react';
+import { useToast } from '../../components/Toast';
 
 export default function AdminPoints() {
   const [data, setData] = useState(null);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState('pending');
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
+  const toast = useToast();
   const [previewImg, setPreviewImg] = useState(null);
 
   const fetch = (p = 1) => {
@@ -28,10 +29,10 @@ export default function AdminPoints() {
     if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} this points request?`)) return;
     try {
       await api.patch(`/admin/points-requests/${id}/${action}`);
-      setMessage(`Points request ${action}d.`);
+      toast.success(`Points request ${action}d.`);
       fetch(page);
     } catch (err) {
-      setMessage(err.response?.data?.message || `Failed to ${action}.`);
+      toast.error(err.response?.data?.message || `Failed to ${action}.`);
     }
   };
 
@@ -47,12 +48,6 @@ export default function AdminPoints() {
           <option value="rejected">Rejected</option>
         </select>
       </div>
-
-      {message && (
-        <div className={`mb-4 px-4 py-3 rounded-lg text-sm ${message.includes('Failed') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
-          {message}
-        </div>
-      )}
 
       {loading ? (
         <TableSkeleton rows={6} cols={6} />

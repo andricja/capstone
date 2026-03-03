@@ -4,6 +4,7 @@ import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { CardGridSkeleton } from '../../components/Skeleton';
 import { Search, MapPin, Ruler, Clock, Calendar, Truck, Calculator, LayoutGrid, Table, Banknote, Upload, ImageIcon } from 'lucide-react';
+import { useToast } from '../../components/Toast';
 
 const CATEGORIES = ['', 'tractor', 'harvester', 'planter', 'irrigation', 'cultivator', 'sprayer', 'trailer', 'other'];
 const MUNICIPALITIES = [
@@ -20,6 +21,7 @@ const COVERAGE_RATES = {
 
 export default function BrowseEquipment() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [allEquipment, setAllEquipment] = useState([]);
   const [filters, setFilters] = useState({ location: '', category: '', status: 'available' });
   const [loading, setLoading] = useState(true);
@@ -40,7 +42,6 @@ export default function BrowseEquipment() {
     payment_method: 'cod',
   });
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
   const [paymentProofFile, setPaymentProofFile] = useState(null);
   const [proofPreview, setProofPreview] = useState(null);
 
@@ -82,13 +83,11 @@ export default function BrowseEquipment() {
     setRentalForm({ contact_number: '', farm_size_sqm: '', start_date: '', delivery_address: '', latitude: '', longitude: '', payment_method: 'cod' });
     setPaymentProofFile(null);
     setProofPreview(null);
-    setMessage('');
   };
 
   const submitRental = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setMessage('');
     try {
       const formData = new FormData();
       formData.append('equipment_id', selected.id);
@@ -107,7 +106,7 @@ export default function BrowseEquipment() {
       setSelected(null);
       navigate('/renter/rentals');
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to submit rental request.');
+      toast.error(err.response?.data?.message || 'Failed to submit rental request.');
     } finally {
       setSubmitting(false);
     }
@@ -157,34 +156,28 @@ export default function BrowseEquipment() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Browse Equipment</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Browse Equipment</h1>
         <button
           onClick={() => { setViewMode(viewMode === 'card' ? 'table' : 'card'); setPage(1); }}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
         >
           {viewMode === 'card' ? <><Table className="w-4 h-4" /> Table View</> : <><LayoutGrid className="w-4 h-4" /> Card View</>}
         </button>
       </div>
 
-      {message && (
-        <div className={`mb-4 px-4 py-3 rounded-lg text-sm ${message.includes('Failed') || message.includes('need') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
-          {message}
-        </div>
-      )}
-
       {/* Filters */}
-      <form onSubmit={handleFilter} className="bg-white rounded-xl shadow-sm border p-4 mb-6 flex flex-wrap gap-3 items-end">
+      <form onSubmit={handleFilter} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4 mb-6 flex flex-wrap gap-3 items-end transition-colors">
         <div className="flex-1 min-w-[180px]">
-          <label className="block text-xs font-medium text-gray-500 mb-1"><MapPin className="inline mr-1 w-3 h-3" />Municipality</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><MapPin className="inline mr-1 w-3 h-3" />Municipality</label>
           <select value={filters.location} onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200">
             {MUNICIPALITIES.map((m) => <option key={m} value={m}>{m || 'All Locations'}</option>)}
           </select>
         </div>
         <div className="flex-1 min-w-[160px]">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Category</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Category</label>
           <select value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200">
             {CATEGORIES.map((c) => <option key={c} value={c}>{c ? c.charAt(0).toUpperCase() + c.slice(1) : 'All Categories'}</option>)}
           </select>
         </div>
@@ -202,19 +195,19 @@ export default function BrowseEquipment() {
         /* ══════════ CARD VIEW ══════════ */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {allEquipment.map((eq) => (
-            <div key={eq.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
+            <div key={eq.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 overflow-hidden transition-colors">
               {eq.image ? (
                 <img src={`/storage/${eq.image}`} alt={eq.name} className="w-full h-48 object-cover" />
               ) : (
-                <div className="w-full h-48 bg-gray-100 flex items-center justify-center text-4xl text-gray-300">🚜</div>
+                <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-4xl text-gray-300">🚜</div>
               )}
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-gray-900">{eq.name}</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">{eq.name}</h3>
                   <StatusBadge status={eq.status} />
                 </div>
-                <p className="text-xs text-gray-500 mb-1 capitalize">{eq.category} • {eq.location}</p>
-                <p className="text-sm text-gray-600 line-clamp-2 mb-3">{eq.description || 'No description provided.'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 capitalize">{eq.category} • {eq.location}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">{eq.description || 'No description provided.'}</p>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-lg font-bold text-green-700">₱{parseFloat(eq.daily_rate).toLocaleString()}<span className="text-xs font-normal text-gray-500">/day</span></p>
@@ -236,28 +229,28 @@ export default function BrowseEquipment() {
         </div>
       ) : (
         /* ══════════ TABLE VIEW ══════════ */
-        <div className="bg-white rounded-xl shadow-sm border">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
           {/* Toolbar */}
-          <div className="p-4 border-b flex flex-wrap items-center justify-between gap-3">
+          <div className="p-4 border-b dark:border-gray-700 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm">
-              <label className="text-gray-500">Show</label>
+              <label className="text-gray-500 dark:text-gray-400">Show</label>
               <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}
-                className="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                className="border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200">
                 {[6, 12, 25, 50].map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
-              <span className="text-gray-500">entries</span>
+              <span className="text-gray-500 dark:text-gray-400">entries</span>
             </div>
             <input
               type="text" placeholder="Search equipment..."
               value={tableSearch} onChange={(e) => { setTableSearch(e.target.value); setPage(1); }}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none w-64"
+              className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200 w-64"
             />
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                   {[
                     ['id', '#'],
@@ -268,19 +261,19 @@ export default function BrowseEquipment() {
                     ['status', 'Status'],
                   ].map(([col, label]) => (
                     <th key={col} onClick={() => toggleSort(col)}
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:text-gray-700 select-none whitespace-nowrap">
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 select-none whitespace-nowrap">
                       {label}{sortIcon(col)}
                     </th>
                   ))}
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y dark:divide-gray-700">
                 {paginated.length === 0 ? (
                   <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400">No matching equipment.</td></tr>
                 ) : paginated.map((eq) => (
-                  <tr key={eq.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-mono text-gray-400">{eq.id}</td>
+                  <tr key={eq.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <td className="px-4 py-3 font-mono text-gray-400 dark:text-gray-500">{eq.id}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {eq.image ? (
@@ -289,8 +282,8 @@ export default function BrowseEquipment() {
                           <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg text-gray-300">🚜</div>
                         )}
                         <div>
-                          <p className="font-medium text-gray-900">{eq.name}</p>
-                          {eq.owner && <p className="text-xs text-gray-400">Owner: {eq.owner.name}</p>}
+                          <p className="font-medium text-gray-900 dark:text-white">{eq.name}</p>
+                          {eq.owner && <p className="text-xs text-gray-400 dark:text-gray-500">Owner: {eq.owner.name}</p>}
                         </div>
                       </div>
                     </td>
@@ -320,7 +313,7 @@ export default function BrowseEquipment() {
           </div>
 
           {/* Pagination footer */}
-          <div className="px-4 py-3 border-t flex items-center justify-between text-sm text-gray-500">
+          <div className="px-4 py-3 border-t dark:border-gray-700 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <span>Showing {((page - 1) * perPage) + 1}–{Math.min(page * perPage, processed.length)} of {processed.length}</span>
             <div className="flex gap-1">
               <button disabled={page <= 1} onClick={() => setPage(page - 1)}
@@ -341,22 +334,22 @@ export default function BrowseEquipment() {
       {/* Rental modal — farm-size based */}
       {selected && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Request Rental</h2>
-            <p className="text-sm text-gray-500 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Request Rental</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
               {selected.name} <span className="capitalize">({selected.category})</span> — ₱{parseFloat(selected.daily_rate).toLocaleString()}/day
             </p>
 
             <form onSubmit={submitRental} className="space-y-3">
               {/* Farm Size — main input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   <Ruler className="inline w-4 h-4 mr-1 -mt-0.5" />Farm Size (sqm)
                 </label>
                 <input type="number" min="100" step="1" required value={rentalForm.farm_size_sqm}
                   onChange={(e) => setRentalForm({ ...rentalForm, farm_size_sqm: e.target.value })}
                   placeholder="e.g. 5000"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" />
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200" />
                 <p className="text-xs text-gray-400 mt-1">Minimum 100 sqm. Coverage rate for {selected.category}: ~{(COVERAGE_RATES[selected.category] || 1500).toLocaleString()} sqm/hr</p>
               </div>
 
@@ -382,19 +375,19 @@ export default function BrowseEquipment() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contact Number</label>
                 <input type="text" required value={rentalForm.contact_number}
                   onChange={(e) => setRentalForm({ ...rentalForm, contact_number: e.target.value })}
                   placeholder="e.g. 09171234567"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" />
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
                 <input type="date" required value={rentalForm.start_date}
                   onChange={(e) => setRentalForm({ ...rentalForm, start_date: e.target.value })}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" />
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200" />
                 {costBreakdown && rentalForm.start_date && (
                   <p className="text-xs text-gray-400 mt-1">
                     End date (auto): {new Date(new Date(rentalForm.start_date).getTime() + costBreakdown.rentalDays * 86400000).toLocaleDateString()}
@@ -403,33 +396,33 @@ export default function BrowseEquipment() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Delivery Address</label>
                 <input type="text" required value={rentalForm.delivery_address}
                   onChange={(e) => setRentalForm({ ...rentalForm, delivery_address: e.target.value })}
                   placeholder="Barangay, Municipality, Oriental Mindoro"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" />
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Latitude (optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Latitude (optional)</label>
                   <input type="text" value={rentalForm.latitude}
                     onChange={(e) => setRentalForm({ ...rentalForm, latitude: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200"
                     placeholder="e.g. 13.0039" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Longitude (optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Longitude (optional)</label>
                   <input type="text" value={rentalForm.longitude}
                     onChange={(e) => setRentalForm({ ...rentalForm, longitude: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200"
                     placeholder="e.g. 121.4052" />
                 </div>
               </div>
 
               {/* Payment Method */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   <Banknote className="inline w-4 h-4 mr-1 -mt-0.5" />Payment Method
                 </label>
                 <div className="flex gap-3">
@@ -438,7 +431,7 @@ export default function BrowseEquipment() {
                       className={`flex-1 flex items-center gap-2 px-4 py-2.5 border rounded-lg cursor-pointer transition-colors ${
                         rentalForm.payment_method === opt.value
                           ? 'border-green-500 bg-green-50 text-green-700'
-                          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                          : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
                       }`}>
                       <input type="radio" name="payment_method" value={opt.value}
                         checked={rentalForm.payment_method === opt.value}
@@ -515,8 +508,8 @@ export default function BrowseEquipment() {
 
               {/* Cost breakdown */}
               {costBreakdown && (
-                <div className="bg-gray-50 rounded-lg p-4 text-sm space-y-1">
-                  <p className="font-semibold text-gray-700 mb-2">Cost Breakdown</p>
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-sm space-y-1">
+                  <p className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Cost Breakdown</p>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Base Cost (₱{fmt(selected.daily_rate)} × {costBreakdown.rentalDays} day{costBreakdown.rentalDays > 1 ? 's' : ''})</span>
                     <span>₱{fmt(costBreakdown.baseCost)}</span>
@@ -537,7 +530,7 @@ export default function BrowseEquipment() {
               )}
 
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setSelected(null)} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+                <button type="button" onClick={() => setSelected(null)} className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
                 <button type="submit" disabled={submitting || !costBreakdown || (rentalForm.payment_method === 'gcash' && !paymentProofFile)} className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50">
                   {submitting ? 'Submitting...' : 'Confirm Booking'}
                 </button>

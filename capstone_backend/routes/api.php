@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminReportController;
+use App\Http\Controllers\Api\ArchiveController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EquipmentController;
@@ -30,6 +31,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user',    [AuthController::class, 'user']);
 
+    // Profile / Account settings (any role)
+    Route::put('/profile',  [AuthController::class, 'updateProfile']);
+    Route::put('/password', [AuthController::class, 'updatePassword']);
+
     // Dashboard (role-aware)
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
@@ -52,6 +57,14 @@ Route::middleware('auth:sanctum')->group(function () {
         // Message / inquiries
         Route::get('/messages',  [MessageRequestController::class, 'myMessages']);
         Route::post('/messages', [MessageRequestController::class, 'store']);
+
+        // Archive
+        Route::get('/archived/rentals',             [ArchiveController::class, 'renterArchivedRentals']);
+        Route::patch('/archived/rentals/{id}',      [ArchiveController::class, 'renterToggleRental']);
+        Route::delete('/archived/rentals/{id}',     [ArchiveController::class, 'renterDeleteRental']);
+        Route::get('/archived/messages',            [ArchiveController::class, 'renterArchivedMessages']);
+        Route::patch('/archived/messages/{id}',     [ArchiveController::class, 'renterToggleMessage']);
+        Route::delete('/archived/messages/{id}',    [ArchiveController::class, 'renterDeleteMessage']);
     });
 
     /* ------------------------------------------------------------------ */
@@ -77,6 +90,14 @@ Route::middleware('auth:sanctum')->group(function () {
         // GCash settings
         Route::get('/gcash-settings',  [GcashSettingController::class, 'show']);
         Route::post('/gcash-settings', [GcashSettingController::class, 'store']);
+
+        // Archive
+        Route::get('/archived/equipment',            [ArchiveController::class, 'ownerArchivedEquipment']);
+        Route::patch('/archived/equipment/{id}',     [ArchiveController::class, 'ownerToggleEquipment']);
+        Route::delete('/archived/equipment/{id}',    [ArchiveController::class, 'ownerDeleteEquipment']);
+        Route::get('/archived/rentals',              [ArchiveController::class, 'ownerArchivedRentals']);
+        Route::patch('/archived/rentals/{id}',       [ArchiveController::class, 'ownerToggleRental']);
+        Route::delete('/archived/rentals/{id}',      [ArchiveController::class, 'ownerDeleteRental']);
     });
 
     /* ------------------------------------------------------------------ */
@@ -120,5 +141,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/smtp-settings',       [SmtpSettingController::class, 'show']);
         Route::post('/smtp-settings',      [SmtpSettingController::class, 'store']);
         Route::post('/smtp-settings/test', [SmtpSettingController::class, 'test']);
+
+        // Archive
+        Route::get('/archived/all',                   [ArchiveController::class, 'adminArchivedAll']);
+        Route::patch('/archived/owners/{id}',         [ArchiveController::class, 'adminToggleOwner']);
+        Route::delete('/archived/owners/{id}',        [ArchiveController::class, 'adminDeleteOwner']);
+        Route::patch('/archived/equipment/{id}',      [ArchiveController::class, 'adminToggleEquipment']);
+        Route::delete('/archived/equipment/{id}',     [ArchiveController::class, 'adminDeleteEquipment']);
+        Route::patch('/archived/rentals/{id}',        [ArchiveController::class, 'adminToggleRental']);
+        Route::delete('/archived/rentals/{id}',       [ArchiveController::class, 'adminDeleteRental']);
+        Route::patch('/archived/messages/{id}',       [ArchiveController::class, 'adminToggleMessage']);
+        Route::delete('/archived/messages/{id}',      [ArchiveController::class, 'adminDeleteMessage']);
     });
 });

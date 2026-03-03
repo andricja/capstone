@@ -1,10 +1,12 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   Menu, X, Tractor, LogOut,
   Home, Search, ClipboardList, Mail,
   Package, ClipboardCheck, Settings, Users, BarChart3,
-  CheckCircle, UserCheck, Server, Bell,
+  CheckCircle, UserCheck, Bell,
+  Sun, Moon, ChevronRight,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -13,6 +15,7 @@ const HEADER_PX = '56px';
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
+  const { dark, toggle } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -25,44 +28,63 @@ export default function Sidebar() {
   const navLinks = getNavLinks(user?.role);
   const isActive = (path) => location.pathname === path;
 
-  // Derive page title from current route
+  // Derive breadcrumb from current route
   const currentLink = navLinks.find((l) => l.to === location.pathname);
   const pageTitle = currentLink?.label || 'Dashboard';
+  const roleLabel = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : '';
 
   return (
     <>
       {/* ═══════ Top Header Bar (always visible) ═══════ */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 ${HEADER_H} bg-green-800 text-white flex items-center justify-between px-4 md:pl-[272px] shadow-sm`}
+        className={`fixed top-0 left-0 right-0 z-50 ${HEADER_H} bg-green-800 dark:bg-gray-800 text-white flex items-center shadow-sm transition-colors`}
       >
-        {/* Mobile: logo + hamburger */}
-        <div className="flex items-center gap-3">
+        {/* Logo area — matches sidebar width on desktop */}
+        <div className="flex items-center gap-2 px-4 md:w-64 md:px-5 shrink-0 md:border-r md:border-green-700 md:dark:border-gray-700 self-stretch">
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden text-white hover:text-green-200"
+            className="md:hidden text-white hover:text-green-200 mr-1"
           >
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <Link to="/" className="md:hidden flex items-center gap-2 text-white font-bold text-lg">
-            <Tractor className="w-5 h-5" />
-            <span>FERMs</span>
+          <Link to="/" className="flex items-center gap-2 text-white">
+            <Tractor className="w-6 h-6 text-green-300 dark:text-green-400" />
+            <span className="text-xl font-bold tracking-wide">FERMs</span>
           </Link>
-          {/* Desktop: page title */}
-          <h1 className="hidden md:block text-lg font-semibold text-white">{pageTitle}</h1>
         </div>
 
-        {/* Right side: user info */}
-        {user && (
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium text-white leading-tight">{user.name}</p>
-              <p className="text-xs text-green-300 capitalize">{user.role}</p>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">
-              {user.name?.charAt(0).toUpperCase()}
-            </div>
-          </div>
-        )}
+        {/* Center: breadcrumb (desktop) */}
+        <div className="flex-1 flex items-center px-4">
+          <nav className="hidden md:flex items-center gap-1.5 text-sm">
+            <span className="text-green-300 dark:text-gray-400">{roleLabel}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-green-400 dark:text-gray-500" />
+            <span className="text-white font-semibold">{pageTitle}</span>
+          </nav>
+        </div>
+
+        {/* Right side: dark toggle + user info */}
+        <div className="flex items-center gap-3 px-4">
+          {/* Dark mode toggle */}
+          <button
+            onClick={toggle}
+            className="p-1.5 rounded-lg hover:bg-green-700 dark:hover:bg-gray-700 transition-colors"
+            title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {dark ? <Sun className="w-5 h-5 text-yellow-300" /> : <Moon className="w-5 h-5 text-green-200" />}
+          </button>
+
+          {user && (
+            <>
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-medium text-white leading-tight">{user.name}</p>
+                <p className="text-xs text-green-300 dark:text-gray-400 capitalize">{user.role}</p>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-green-600 dark:bg-gray-600 text-white flex items-center justify-center text-sm font-bold">
+                {user.name?.charAt(0).toUpperCase()}
+              </div>
+            </>
+          )}
+        </div>
       </header>
 
       {/* Mobile overlay */}
@@ -72,16 +94,10 @@ export default function Sidebar() {
 
       {/* ═══════ Sidebar (below header) ═══════ */}
       <aside
-        className={`fixed left-0 z-40 w-64 bg-green-800 text-white flex flex-col transition-transform duration-200 ease-in-out
+        className={`fixed left-0 z-40 w-64 bg-green-800 dark:bg-gray-800 text-white flex flex-col transition-all duration-200 ease-in-out
           ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         style={{ top: HEADER_PX, height: `calc(100vh - ${HEADER_PX})` }}
       >
-        {/* Logo area inside sidebar (desktop) */}
-        <div className="hidden md:flex items-center gap-2 px-5 h-14 border-b border-green-700 shrink-0">
-          <Tractor className="w-6 h-6 text-green-300" />
-          <span className="text-xl font-bold tracking-wide">FERMs</span>
-        </div>
-
         {/* Nav links */}
         <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
           {navLinks.map((link) => (
@@ -91,8 +107,8 @@ export default function Sidebar() {
               onClick={() => setOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive(link.to)
-                  ? 'bg-green-600 text-white shadow-sm'
-                  : 'text-green-100 hover:bg-green-700'
+                  ? 'bg-green-600 dark:bg-green-700 text-white shadow-sm'
+                  : 'text-green-100 dark:text-gray-300 hover:bg-green-700 dark:hover:bg-gray-700'
               }`}
             >
               <span className="text-lg">{link.icon}</span>
@@ -101,18 +117,19 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        {/* Logout */}
-        {user && (
-          <div className="px-3 py-4 border-t border-green-700 shrink-0">
+        {/* Logout + Version footer */}
+        <div className="px-3 py-4 border-t border-green-700 dark:border-gray-700 shrink-0">
+          {user && (
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-300 hover:bg-green-700 transition-colors"
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-300 hover:bg-green-700 dark:hover:bg-gray-700 transition-colors"
             >
               <LogOut className="w-5 h-5" />
               Logout
             </button>
-          </div>
-        )}
+          )}
+          <p className="text-[10px] text-green-500 dark:text-gray-500 text-center mt-3">FERMs v1.0.0</p>
+        </div>
       </aside>
     </>
   );
@@ -127,13 +144,14 @@ function getNavLinks(role) {
         { to: '/renter/browse', label: 'Browse Equipment', icon: <Search className="w-5 h-5" /> },
         { to: '/renter/rentals', label: 'My Rentals', icon: <ClipboardList className="w-5 h-5" /> },
         { to: '/renter/messages', label: 'Contact Us', icon: <Mail className="w-5 h-5" /> },
+        { to: '/renter/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
       ];
     case 'owner':
       return [
         { to: '/owner/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
         { to: '/owner/equipment', label: 'My Equipment', icon: <Package className="w-5 h-5" /> },
         { to: '/owner/rentals', label: 'Rental Requests', icon: <ClipboardCheck className="w-5 h-5" /> },
-        { to: '/owner/gcash', label: 'GCash Settings', icon: <Settings className="w-5 h-5" /> },
+        { to: '/owner/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
       ];
     case 'admin':
       return [
@@ -144,7 +162,7 @@ function getNavLinks(role) {
         { to: '/admin/messages', label: 'Messages', icon: <Mail className="w-5 h-5" /> },
         { to: '/admin/reports', label: 'Revenue Reports', icon: <BarChart3 className="w-5 h-5" /> },
         { to: '/admin/accounts', label: 'Accounts', icon: <UserCheck className="w-5 h-5" /> },
-        { to: '/admin/smtp-settings', label: 'Email Settings', icon: <Server className="w-5 h-5" /> },
+        { to: '/admin/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
       ];
     default:
       return [];

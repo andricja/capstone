@@ -12,7 +12,7 @@ import RenterMessages from './pages/renter/RenterMessages';
 import OwnerDashboard from './pages/owner/OwnerDashboard';
 import MyEquipment from './pages/owner/MyEquipment';
 import OwnerRentals from './pages/owner/OwnerRentals';
-import GcashSettings from './pages/owner/GcashSettings';
+
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -22,7 +22,9 @@ import AdminMessages from './pages/admin/AdminMessages';
 import AdminReports from './pages/admin/AdminReports';
 import AdminOwners from './pages/admin/AdminOwners';
 import AdminAccounts from './pages/admin/AdminAccounts';
-import AdminSmtpSettings from './pages/admin/AdminSmtpSettings';
+
+// Shared
+import AccountSettings from './pages/AccountSettings';
 
 // Misc
 import Unauthorized from './pages/Unauthorized';
@@ -41,6 +43,7 @@ export default function App() {
           <Route path="/renter/browse" element={<BrowseEquipment />} />
           <Route path="/renter/rentals" element={<MyRentals />} />
           <Route path="/renter/messages" element={<RenterMessages />} />
+          <Route path="/renter/settings" element={<AccountSettings />} />
         </Route>
       </Route>
 
@@ -50,7 +53,7 @@ export default function App() {
           <Route path="/owner/dashboard" element={<OwnerDashboard />} />
           <Route path="/owner/equipment" element={<MyEquipment />} />
           <Route path="/owner/rentals" element={<OwnerRentals />} />
-          <Route path="/owner/gcash" element={<GcashSettings />} />
+          <Route path="/owner/settings" element={<AccountSettings />} />
         </Route>
       </Route>
 
@@ -64,7 +67,7 @@ export default function App() {
           <Route path="/admin/messages" element={<AdminMessages />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/accounts" element={<AdminAccounts />} />
-          <Route path="/admin/smtp-settings" element={<AdminSmtpSettings />} />
+          <Route path="/admin/settings" element={<AccountSettings />} />
         </Route>
       </Route>
 

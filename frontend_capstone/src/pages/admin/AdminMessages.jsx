@@ -3,13 +3,14 @@ import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { TableSkeleton } from '../../components/Skeleton';
 import DataTable from '../../components/DataTable';
-import { Trash2, MessageSquare, Eye, X } from 'lucide-react';
+import { Trash2, MessageSquare, Eye, X, Archive } from 'lucide-react';
+import { useToast } from '../../components/Toast';
 
 export default function AdminMessages() {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
+  const toast = useToast();
   const [selected, setSelected] = useState(null);
 
   const fetchMessages = (f = filter) => {
@@ -27,10 +28,10 @@ export default function AdminMessages() {
     e?.stopPropagation();
     try {
       await api.patch(`/admin/messages/${id}/status`, { status });
-      setMessage('Status updated.');
+      toast.success('Status updated.');
       fetchMessages(filter);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to update.');
+      toast.error(err.response?.data?.message || 'Failed to update.');
     }
   };
 
@@ -39,11 +40,24 @@ export default function AdminMessages() {
     if (!confirm('Delete this message?')) return;
     try {
       await api.delete(`/admin/messages/${id}`);
-      setMessage('Message deleted.');
+      toast.success('Message deleted.');
       fetchMessages(filter);
       if (selected?.id === id) setSelected(null);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to delete.');
+      toast.error(err.response?.data?.message || 'Failed to delete.');
+    }
+  };
+
+  const handleArchive = async (id, e) => {
+    e?.stopPropagation();
+    if (!confirm('Archive this message?')) return;
+    try {
+      await api.patch(`/admin/archived/messages/${id}`);
+      toast.success('Message archived.');
+      fetchMessages(filter);
+      if (selected?.id === id) setSelected(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to archive.');
     }
   };
 
@@ -51,32 +65,32 @@ export default function AdminMessages() {
     {
       key: 'created_at',
       label: 'Date',
-      render: (row) => <span className="text-gray-500 text-xs">{new Date(row.created_at).toLocaleDateString()}</span>,
+      render: (row) => <span className="text-gray-500 dark:text-gray-400 text-xs">{new Date(row.created_at).toLocaleDateString()}</span>,
     },
     {
       key: 'name',
       label: 'Name',
-      render: (row) => <span className="font-medium text-gray-900">{row.name}</span>,
+      render: (row) => <span className="font-medium text-gray-900 dark:text-white">{row.name}</span>,
     },
     {
       key: 'renter.email',
       label: 'Email',
-      render: (row) => <span className="text-gray-500">{row.renter?.email}</span>,
+      render: (row) => <span className="text-gray-500 dark:text-gray-400">{row.renter?.email}</span>,
     },
     {
       key: 'contact_number',
       label: 'Contact',
-      render: (row) => <span className="text-gray-500">{row.contact_number}</span>,
+      render: (row) => <span className="text-gray-500 dark:text-gray-400">{row.contact_number}</span>,
     },
     {
       key: 'location',
       label: 'Location',
-      render: (row) => <span className="text-gray-500 text-xs">{row.location}</span>,
+      render: (row) => <span className="text-gray-500 dark:text-gray-400 text-xs">{row.location}</span>,
     },
     {
       key: 'message',
       label: 'Message',
-      render: (row) => <p className="text-gray-600 text-xs truncate max-w-[200px]">{row.message}</p>,
+      render: (row) => <p className="text-gray-600 dark:text-gray-400 text-xs truncate max-w-[200px]">{row.message}</p>,
       sortable: false,
     },
     {
@@ -108,6 +122,10 @@ export default function AdminMessages() {
             className="text-red-500 hover:bg-red-50 p-1 rounded border border-red-200">
             <Trash2 className="w-3.5 h-3.5" />
           </button>
+          <button onClick={(e) => handleArchive(row.id, e)}
+            className="text-amber-600 hover:bg-amber-50 p-1 rounded border border-amber-200">
+            <Archive className="w-3.5 h-3.5" />
+          </button>
         </div>
       ),
     },
@@ -117,7 +135,7 @@ export default function AdminMessages() {
     <div>
       <div className="flex items-center gap-3 mb-4">
         <MessageSquare className="w-7 h-7 text-green-600" />
-        <h1 className="text-2xl font-bold text-gray-900">Message Requests</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Message Requests</h1>
       </div>
 
       <div className="flex items-center gap-2 mb-6 flex-wrap">
@@ -133,17 +151,13 @@ export default function AdminMessages() {
             className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
               filter === btn.value
                 ? 'bg-green-600 text-white border-green-600'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >
             {btn.label}
           </button>
         ))}
       </div>
-
-      {message && (
-        <div className="mb-4 px-4 py-3 rounded-lg text-sm bg-green-50 text-green-700">{message}</div>
-      )}
 
       {loading ? (
         <TableSkeleton rows={8} cols={5} />
@@ -161,11 +175,11 @@ export default function AdminMessages() {
       {/* ── Detail Modal ── */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-6 py-4 border-b">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">{selected.name}</h2>
-                <p className="text-sm text-gray-500">{selected.renter?.email} • {selected.contact_number}</p>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{selected.name}</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{selected.renter?.email} • {selected.contact_number}</p>
               </div>
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 p-1">
                 <X className="w-5 h-5" />
@@ -178,13 +192,13 @@ export default function AdminMessages() {
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Location</p>
-                <p className="text-sm text-gray-700">{selected.location}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">{selected.location}</p>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Message</p>
-                <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 whitespace-pre-wrap">{selected.message}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg p-3 whitespace-pre-wrap">{selected.message}</p>
               </div>
-              <div className="flex items-center gap-2 flex-wrap pt-2 border-t">
+              <div className="flex items-center gap-2 flex-wrap pt-2 border-t dark:border-gray-700">
                 {selected.status === 'pending' && (
                   <button onClick={(e) => { updateStatus(selected.id, 'reviewed', e); setSelected((s) => ({ ...s, status: 'reviewed' })); }}
                     className="text-purple-600 hover:bg-purple-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-purple-200">
@@ -200,6 +214,10 @@ export default function AdminMessages() {
                 <button onClick={(e) => handleDelete(selected.id, e)}
                   className="text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-red-200 flex items-center gap-1 ml-auto">
                   <Trash2 className="w-3.5 h-3.5" /> Delete
+                </button>
+                <button onClick={(e) => handleArchive(selected.id, e)}
+                  className="text-amber-600 hover:bg-amber-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-amber-200 flex items-center gap-1">
+                  <Archive className="w-3.5 h-3.5" /> Archive
                 </button>
               </div>
             </div>

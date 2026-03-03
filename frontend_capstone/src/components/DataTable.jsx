@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Search, ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import EmptyState from './EmptyState';
 
 const ENTRIES_OPTIONS = [5, 10, 25, 50, 100];
 
@@ -86,10 +87,10 @@ export default function DataTable({
   };
 
   const renderSortIcon = (key) => {
-    if (sortKey !== key) return <ChevronsUpDown className="w-3.5 h-3.5 text-gray-300" />;
+    if (sortKey !== key) return <ChevronsUpDown className="w-3.5 h-3.5 text-gray-300 dark:text-gray-500" />;
     return sortDir === 'asc'
-      ? <ChevronUp className="w-3.5 h-3.5 text-green-600" />
-      : <ChevronDown className="w-3.5 h-3.5 text-green-600" />;
+      ? <ChevronUp className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+      : <ChevronDown className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />;
   };
 
   // Page numbers to display
@@ -104,15 +105,15 @@ export default function DataTable({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 overflow-hidden transition-colors">
       {/* Toolbar: entries-per-page & search */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-3 border-b bg-gray-50/50">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-3 border-b dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
           <span>Show</span>
           <select
             value={perPage}
             onChange={(e) => handlePerPageChange(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white"
+            className="border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white dark:bg-gray-700 dark:text-gray-200"
           >
             {ENTRIES_OPTIONS.map((n) => (
               <option key={n} value={n}>{n}</option>
@@ -122,13 +123,13 @@ export default function DataTable({
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
             placeholder="Search..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-9 pr-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+            className="w-full pl-9 pr-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
           />
         </div>
       </div>
@@ -136,14 +137,14 @@ export default function DataTable({
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 dark:bg-gray-700/50 sticky top-0 z-10">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-4 py-3 text-xs font-medium text-gray-500 uppercase whitespace-nowrap ${
+                  className={`px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase whitespace-nowrap ${
                     col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'
-                  } ${col.sortable !== false ? 'cursor-pointer select-none hover:bg-gray-100 transition-colors' : ''} ${col.className ?? ''}`}
+                  } ${col.sortable !== false ? 'cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-600/50 transition-colors' : ''} ${col.className ?? ''}`}
                   onClick={() => col.sortable !== false && handleSort(col.key)}
                 >
                   <span className="inline-flex items-center gap-1">
@@ -154,11 +155,15 @@ export default function DataTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y dark:divide-gray-700">
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-400">
-                  {search ? 'No matching records found.' : emptyMessage}
+                <td colSpan={columns.length} className="px-4 py-6">
+                  <EmptyState
+                    icon={search ? 'search' : 'default'}
+                    title={search ? 'No matching records' : 'No data yet'}
+                    message={search ? 'Try adjusting your search terms.' : emptyMessage}
+                  />
                 </td>
               </tr>
             ) : (
@@ -166,12 +171,14 @@ export default function DataTable({
                 <tr
                   key={row.id ?? idx}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={`hover:bg-gray-50 transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                  className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                    idx % 2 === 1 ? 'bg-gray-50/50 dark:bg-gray-800/50' : ''
+                  } ${onRowClick ? 'cursor-pointer' : ''}`}
                 >
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className={`px-4 py-3 ${
+                      className={`px-4 py-3 text-gray-700 dark:text-gray-300 ${
                         col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'
                       } ${col.tdClassName ?? ''}`}
                     >
@@ -188,11 +195,11 @@ export default function DataTable({
       </div>
 
       {/* Footer: showing info & pagination */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t bg-gray-50/50">
-        <p className="text-sm text-gray-500">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Showing {sorted.length === 0 ? 0 : (safePage - 1) * perPage + 1} to {Math.min(safePage * perPage, sorted.length)} of {sorted.length} entries
           {search && data.length !== sorted.length && (
-            <span className="text-gray-400"> (filtered from {data.length} total)</span>
+            <span className="text-gray-400 dark:text-gray-500"> (filtered from {data.length} total)</span>
           )}
         </p>
 
@@ -201,7 +208,7 @@ export default function DataTable({
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={safePage === 1}
-              className="p-1.5 rounded-lg border text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg border dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -212,7 +219,7 @@ export default function DataTable({
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                   n === safePage
                     ? 'bg-green-600 text-white shadow-sm'
-                    : 'border text-gray-600 hover:bg-gray-100'
+                    : 'border dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {n}
@@ -221,7 +228,7 @@ export default function DataTable({
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage === totalPages}
-              className="p-1.5 rounded-lg border text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg border dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

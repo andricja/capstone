@@ -22,7 +22,8 @@ class EquipmentController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Equipment::with('owner:id,name,email', 'owner.gcashSetting:id,owner_id,account_name,account_number,qr_code_image')
-            ->approved(); // available, rented, maintenance (not pending/rejected)
+            ->approved() // available, rented, maintenance (not pending/rejected)
+            ->whereNull('archived_at');
 
         if ($request->filled('location')) {
             $query->byLocation($request->input('location'));
@@ -66,6 +67,7 @@ class EquipmentController extends Controller
     {
         $equipment = $request->user()
             ->equipment()
+            ->whereNull('archived_at')
             ->latest()
             ->paginate(15);
 
@@ -189,6 +191,7 @@ class EquipmentController extends Controller
     {
         $equipment = Equipment::with('owner:id,name,email')
             ->where('status', 'pending')
+            ->whereNull('archived_at')
             ->latest()
             ->paginate(15);
 
@@ -200,7 +203,8 @@ class EquipmentController extends Controller
      */
     public function adminIndex(Request $request): JsonResponse
     {
-        $query = Equipment::with('owner:id,name,email');
+        $query = Equipment::with('owner:id,name,email')
+            ->whereNull('archived_at');
 
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));

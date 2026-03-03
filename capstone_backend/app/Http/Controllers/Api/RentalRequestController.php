@@ -24,6 +24,7 @@ class RentalRequestController extends Controller
         $query = $request->user()
             ->rentalRequests()
             ->with('equipment:id,name,category,image,daily_rate,transportation_fee,location,status', 'equipment.owner:id,name,email')
+            ->whereNull('archived_at')
             ->latest();
 
         if ($request->boolean('all')) {
@@ -137,6 +138,7 @@ class RentalRequestController extends Controller
                 'equipment:id,name,category,daily_rate,transportation_fee,location',
             ])
             ->whereIn('equipment_id', $equipmentIds)
+            ->whereNull('archived_at')
             ->latest();
 
         if ($request->boolean('all')) {
@@ -213,7 +215,8 @@ class RentalRequestController extends Controller
                 'renter:id,name,email',
                 'equipment:id,name,category,location',
                 'equipment.owner:id,name,email',
-            ]);
+            ])
+            ->whereNull('archived_at');
 
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));

@@ -17,7 +17,15 @@ class MessageRequest extends Model
         'location',
         'message',
         'status',
+        'archived_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'archived_at' => 'datetime',
+        ];
+    }
 
     /* ------------------------------------------------------------------ */
     /*  Relationships                                                      */

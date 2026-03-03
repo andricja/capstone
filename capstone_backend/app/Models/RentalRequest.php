@@ -29,6 +29,7 @@ class RentalRequest extends Model
         'status',
         'payment_method',
         'payment_proof',
+        'archived_at',
     ];
 
     protected function casts(): array
@@ -45,6 +46,7 @@ class RentalRequest extends Model
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'rental_days' => 'integer',
+            'archived_at' => 'datetime',
         ];
     }
 

@@ -21,6 +21,7 @@ class MessageRequestController extends Controller
     {
         $messages = $request->user()
             ->messageRequests()
+            ->whereNull('archived_at')
             ->latest()
             ->paginate(15);
 
@@ -52,7 +53,8 @@ class MessageRequestController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = MessageRequest::with('renter:id,name,email');
+        $query = MessageRequest::with('renter:id,name,email')
+            ->whereNull('archived_at');
 
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));

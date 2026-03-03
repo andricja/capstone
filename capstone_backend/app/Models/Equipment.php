@@ -25,6 +25,7 @@ class Equipment extends Model
         'status',
         'approval_fee',
         'approved_at',
+        'archived_at',
     ];
 
     protected function casts(): array
@@ -34,6 +35,7 @@ class Equipment extends Model
             'transportation_fee' => 'decimal:2',
             'approval_fee' => 'decimal:2',
             'approved_at' => 'datetime',
+            'archived_at' => 'datetime',
         ];
     }
 

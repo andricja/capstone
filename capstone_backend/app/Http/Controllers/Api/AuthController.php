@@ -381,4 +381,52 @@ class AuthController extends Controller
             'period'                => $period,
         ]);
     }
+
+    /* ================================================================== */
+    /*  ACCOUNT SETTINGS (any authenticated user)                          */
+    /* ================================================================== */
+
+    /**
+     * Update authenticated user's profile (name & email).
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name'  => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'user'    => $user->only('id', 'name', 'email', 'role'),
+        ]);
+    }
+
+    /**
+     * Update authenticated user's password.
+     */
+    public function updatePassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'password'         => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $user = $request->user();
+
+        if (! Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'The current password is incorrect.',
+                'errors'  => ['current_password' => ['The current password is incorrect.']],
+            ], 422);
+        }
+
+        $user->update(['password' => $request->password]);
+
+        return response()->json(['message' => 'Password updated successfully.']);
+    }
 }

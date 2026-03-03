@@ -137,7 +137,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative max-h-[90vh] overflow-y-auto animate-in" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md relative max-h-[90vh] overflow-y-auto animate-in" onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
           <X className="w-5 h-5" />
@@ -148,8 +148,8 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
             {/* ════════ STEP 1: Registration Form ════════ */}
             <div className="text-center mb-8">
               <Tractor className="w-12 h-12 text-green-600 mx-auto mb-2" />
-              <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
-              <p className="text-gray-500 text-sm mt-1">Join FERMs as a renter or equipment owner</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create Account</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Join FERMs as a renter or equipment owner</p>
             </div>
 
             {errors.general && (
@@ -161,7 +161,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
             <form onSubmit={handleRegister} className="space-y-4">
               {/* Role selector */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">I want to:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">I want to:</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -169,7 +169,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
                     className={`p-3 rounded-lg border-2 text-center text-sm font-medium transition-colors ${
                       form.role === 'renter'
                         ? 'border-green-600 bg-green-50 text-green-700'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                     }`}
                   >
                     🌾 Rent Equipment
@@ -180,7 +180,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
                     className={`p-3 rounded-lg border-2 text-center text-sm font-medium transition-colors ${
                       form.role === 'owner'
                         ? 'border-green-600 bg-green-50 text-green-700'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                     }`}
                   >
                     🚜 List Equipment
@@ -189,27 +189,27 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
                 <input type="text" required value={form.name} onChange={set('name')}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow" />
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name[0]}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
                 <input type="email" required value={form.email} onChange={set('email')}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow" />
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email[0]}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
                 <input type="password" required value={form.password} onChange={set('password')}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow" />
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password[0]}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password</label>
                 <input type="password" required value={form.password_confirmation} onChange={set('password_confirmation')}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow" />
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
               </div>
 
               <button type="submit" disabled={loading}
@@ -218,7 +218,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
               </button>
             </form>
 
-            <p className="text-center text-sm text-gray-500 mt-6">
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
               Already have an account?{' '}
               <button onClick={onSwitchToLogin} className="text-green-600 hover:text-green-700 font-medium">
                 Sign In
@@ -232,10 +232,10 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <MailCheck className="w-8 h-8 text-green-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">Verify Your Email</h2>
-              <p className="text-gray-500 text-sm mt-2">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Verify Your Email</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
                 We sent a 6-digit code to<br />
-                <span className="font-medium text-gray-700">{form.email}</span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">{form.email}</span>
               </p>
             </div>
 
@@ -263,7 +263,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
                       value={digit}
                       onChange={(e) => handleCodeChange(idx, e.target.value)}
                       onKeyDown={(e) => handleCodeKeyDown(idx, e)}
-                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                     />
                   ))}
                 </div>
@@ -279,7 +279,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
             )}
 
             {!verified && (
-              <p className="text-center text-sm text-gray-500 mt-4">
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
                 Didn't receive the code?{' '}
                 <button
                   onClick={handleResend}

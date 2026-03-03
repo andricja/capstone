@@ -10,11 +10,22 @@ use App\Models\RentalRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Truncate all seeded tables so the seeder can be re-run safely
+        Schema::disableForeignKeyConstraints();
+        MessageRequest::truncate();
+        PointsRequest::truncate();
+        RentalRequest::truncate();
+        GcashSetting::truncate();
+        Equipment::truncate();
+        User::truncate();
+        Schema::enableForeignKeyConstraints();
+
         /* ============================================================== */
         /*  USERS                                                         */
         /* ============================================================== */

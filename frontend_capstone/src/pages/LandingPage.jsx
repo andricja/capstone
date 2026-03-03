@@ -49,15 +49,15 @@ export default function LandingPage() {
   }, [user, navigate]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* ── Navbar ── */}
-      <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
+      <header className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-700 z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-2 text-green-700 font-bold text-xl">
             <Tractor className="w-7 h-7" />
             <span>FERMs</span>
           </Link>
-          <nav className="hidden sm:flex items-center gap-6 text-sm text-gray-600">
+          <nav className="hidden sm:flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
             <a href="#features" className="hover:text-green-700 transition-colors">Features</a>
             <a href="#how" className="hover:text-green-700 transition-colors">How It Works</a>
             <a href="#stats" className="hover:text-green-700 transition-colors">Impact</a>
@@ -69,7 +69,7 @@ export default function LandingPage() {
               </Link>
             ) : (
               <>
-                <button onClick={openLogin} className="text-sm font-medium text-gray-700 hover:text-green-700 transition-colors">Login</button>
+                <button onClick={openLogin} className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-green-700 transition-colors">Login</button>
                 <button onClick={openRegister} className="bg-green-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition-colors">
                   Get Started
                 </button>
@@ -92,11 +92,11 @@ export default function LandingPage() {
             <MapPin className="w-4 h-4" />
             Serving Oriental Mindoro Farmers
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight max-w-4xl mx-auto">
             Rent Farm Equipment<br />
             <span className="text-green-600">Without the Hassle</span>
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
             FERMs connects farmers in Oriental Mindoro with the equipment they need — browse, book, and rent online with our simple farm-size-based system.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -108,7 +108,7 @@ export default function LandingPage() {
             </button>
             <button
               onClick={openRegister}
-              className="bg-white text-gray-700 px-8 py-3.5 rounded-full text-base font-semibold hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-2"
+              className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-8 py-3.5 rounded-full text-base font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border border-gray-200 dark:border-gray-600 flex items-center gap-2"
             >
               List Your Equipment <ChevronRight className="w-5 h-5" />
             </button>
@@ -117,11 +117,11 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features ── */}
-      <section id="features" className="py-20 bg-gray-50">
+      <section id="features" className="py-20 bg-gray-50 dark:bg-gray-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Why Choose FERMs?</h2>
-            <p className="mt-3 text-gray-600 max-w-xl mx-auto">Everything you need to rent or list farm equipment in one platform.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Why Choose FERMs?</h2>
+            <p className="mt-3 text-gray-600 dark:text-gray-400 max-w-xl mx-auto">Everything you need to rent or list farm equipment in one platform.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard
@@ -162,8 +162,8 @@ export default function LandingPage() {
       <section id="how" className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">How It Works</h2>
-            <p className="mt-3 text-gray-600 max-w-xl mx-auto">Get started in just a few steps.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">How It Works</h2>
+            <p className="mt-3 text-gray-600 dark:text-gray-400 max-w-xl mx-auto">Get started in just a few steps.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <StepCard step={1} icon={<Users className="w-7 h-7" />} title="Create Account" desc="Sign up as a renter or equipment owner — it's free." />
@@ -193,8 +193,8 @@ export default function LandingPage() {
       {/* ── CTA ── */}
       <section className="py-20">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
-          <p className="text-gray-600 mb-8 text-lg">Join FERMs today and access the farm equipment you need — or start earning by listing your own.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Ready to Get Started?</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Join FERMs today and access the farm equipment you need — or start earning by listing your own.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button onClick={openRegister} className="bg-green-600 text-white px-8 py-3.5 rounded-full text-base font-semibold hover:bg-green-700 transition-all shadow-lg shadow-green-600/25 flex items-center gap-2">
               Create Free Account <ArrowRight className="w-5 h-5" />
@@ -207,10 +207,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-gray-100 py-8 text-center text-sm text-gray-500">
+      <footer className="border-t border-gray-100 dark:border-gray-700 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
         <div className="flex items-center justify-center gap-2 mb-2">
           <Tractor className="w-5 h-5 text-green-600" />
-          <span className="font-semibold text-gray-700">FERMs</span>
+          <span className="font-semibold text-gray-700 dark:text-gray-300">FERMs</span>
         </div>
         <p>&copy; {new Date().getFullYear()} Farm Equipment Rental &amp; Monitoring System. All rights reserved.</p>
       </footer>
@@ -239,12 +239,12 @@ export default function LandingPage() {
 
 function FeatureCard({ icon, title, desc }) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
       <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-4">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{desc}</p>
     </div>
   );
 }
@@ -258,8 +258,8 @@ function StepCard({ step, icon, title, desc }) {
           {step}
         </span>
       </div>
-      <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-500">{desc}</p>
+      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{title}</h3>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{desc}</p>
     </div>
   );
 }
