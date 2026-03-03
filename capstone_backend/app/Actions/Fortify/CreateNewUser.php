@@ -30,7 +30,6 @@ class CreateNewUser implements CreatesNewUsers
             'email'    => $input['email'],
             'password' => $input['password'],
             'role'     => $input['role'],
-            'points'   => 0,
         ]);
     }
 }

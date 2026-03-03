@@ -114,18 +114,30 @@ export default function AdminMessages() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <MessageSquare className="w-7 h-7 text-green-600" />
-          <h1 className="text-2xl font-bold text-gray-900">Message Requests</h1>
-        </div>
-        <select value={filter} onChange={(e) => setFilter(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="reviewed">Reviewed</option>
-          <option value="responded">Responded</option>
-        </select>
+      <div className="flex items-center gap-3 mb-4">
+        <MessageSquare className="w-7 h-7 text-green-600" />
+        <h1 className="text-2xl font-bold text-gray-900">Message Requests</h1>
+      </div>
+
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
+        {[
+          { label: 'All', value: '' },
+          { label: 'Pending', value: 'pending' },
+          { label: 'Reviewed', value: 'reviewed' },
+          { label: 'Responded', value: 'responded' },
+        ].map((btn) => (
+          <button
+            key={btn.value}
+            onClick={() => setFilter(btn.value)}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+              filter === btn.value
+                ? 'bg-green-600 text-white border-green-600'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+            }`}
+          >
+            {btn.label}
+          </button>
+        ))}
       </div>
 
       {message && (

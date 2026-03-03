@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EquipmentController;
 use App\Http\Controllers\Api\GcashSettingController;
 use App\Http\Controllers\Api\MessageRequestController;
-use App\Http\Controllers\Api\PointsRequestController;
 use App\Http\Controllers\Api\RentalRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,10 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
     /*  RENTER routes                                                      */
     /* ------------------------------------------------------------------ */
     Route::middleware('role:renter')->prefix('renter')->group(function () {
-
-        // Points
-        Route::get('/points-requests',  [PointsRequestController::class, 'myRequests']);
-        Route::post('/points-requests', [PointsRequestController::class, 'store']);
 
         // Rental requests
         Route::get('/rental-requests',  [RentalRequestController::class, 'myRequests']);
@@ -91,11 +86,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/equipment/{equipment}/approve',  [EquipmentController::class, 'approve']);
         Route::patch('/equipment/{equipment}/reject',   [EquipmentController::class, 'reject']);
 
-        // Points request management
-        Route::get('/points-requests',                           [PointsRequestController::class, 'index']);
-        Route::patch('/points-requests/{pointsRequest}/approve', [PointsRequestController::class, 'approve']);
-        Route::patch('/points-requests/{pointsRequest}/reject',  [PointsRequestController::class, 'reject']);
-
         // Rental requests overview
         Route::get('/rental-requests', [RentalRequestController::class, 'index']);
 
@@ -109,6 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/owners/stats', [AuthController::class, 'ownerStats']);
         Route::get('/owners/charts', [AuthController::class, 'ownerChartData']);
         Route::get('/owners/{id}', [AuthController::class, 'ownerShow']);
+        Route::patch('/owners/{id}/archive', [AuthController::class, 'archiveOwner']);
         Route::post('/owners/{ownerId}/equipment', [EquipmentController::class, 'adminStore']);
 
         // Revenue reports

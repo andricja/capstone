@@ -91,7 +91,7 @@ export default function LandingPage() {
             <span className="text-green-600">Without the Hassle</span>
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            FERMs connects farmers in Oriental Mindoro with the equipment they need — browse, book, and pay online with our simple points-based system.
+            FERMs connects farmers in Oriental Mindoro with the equipment they need — browse, book, and rent online with our simple farm-size-based system.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
@@ -125,8 +125,8 @@ export default function LandingPage() {
             />
             <FeatureCard
               icon={<Coins className="w-6 h-6" />}
-              title="Points System"
-              desc="Simple and transparent — buy points via GCash (₱20 per point) and use them to book equipment instantly."
+              title="Easy Booking"
+              desc="Simple and transparent — input your farm size in sqm and the system auto-calculates rental costs instantly."
             />
             <FeatureCard
               icon={<ShieldCheck className="w-6 h-6" />}
@@ -161,7 +161,7 @@ export default function LandingPage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <StepCard step={1} icon={<Users className="w-7 h-7" />} title="Create Account" desc="Sign up as a renter or equipment owner — it's free." />
-            <StepCard step={2} icon={<Coins className="w-7 h-7" />} title="Buy Points" desc="Renters purchase points via GCash to unlock bookings." />
+            <StepCard step={2} icon={<Search className="w-7 h-7" />} title="Enter Farm Size" desc="Input your farm size in sqm to auto-calculate rental duration and costs." />
             <StepCard step={3} icon={<Search className="w-7 h-7" />} title="Browse & Book" desc="Find the equipment you need, then submit a rental request." />
             <StepCard step={4} icon={<CheckCircle className="w-7 h-7" />} title="Get Approved" desc="The owner reviews your request and approves delivery." />
           </div>

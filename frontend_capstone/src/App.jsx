@@ -6,7 +6,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RenterDashboard from './pages/renter/RenterDashboard';
 import BrowseEquipment from './pages/renter/BrowseEquipment';
 import MyRentals from './pages/renter/MyRentals';
-import BuyPoints from './pages/renter/BuyPoints';
 import RenterMessages from './pages/renter/RenterMessages';
 
 // Owner pages
@@ -39,7 +38,6 @@ export default function App() {
           <Route path="/renter/dashboard" element={<RenterDashboard />} />
           <Route path="/renter/browse" element={<BrowseEquipment />} />
           <Route path="/renter/rentals" element={<MyRentals />} />
-          <Route path="/renter/points" element={<BuyPoints />} />
           <Route path="/renter/messages" element={<RenterMessages />} />
         </Route>
       </Route>

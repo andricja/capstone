@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import DataTable from '../../components/DataTable';
-import { Users, UserPlus, Tractor, Mail, Calendar, LayoutGrid, Table, ClipboardList, Plus, X, MapPin, DollarSign, Eye, Truck, Tag, FileText, Clock } from 'lucide-react';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend, LineChart, Line,
-} from 'recharts';
+import { Users, UserPlus, Tractor, Mail, Calendar, LayoutGrid, Table, ClipboardList, Plus, X, MapPin, DollarSign, Eye, Truck, Tag, FileText, Clock, Archive } from 'lucide-react';
 
 const CATEGORIES = ['tractor','harvester','planter','irrigation','cultivator','sprayer','trailer','other'];
 
@@ -29,9 +25,7 @@ export default function AdminOwners() {
   const [detailOwner, setDetailOwner] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
-  // Chart data
-  const [charts, setCharts] = useState(null);
-  const [chartPeriod, setChartPeriod] = useState('yearly');
+
 
   const fetchOwners = () => {
     setLoading(true);
@@ -44,16 +38,7 @@ export default function AdminOwners() {
     api.get('/admin/owners/stats').then((r) => setStats(r.data));
   };
 
-  const fetchCharts = (period = chartPeriod) => {
-    api.get('/admin/owners/charts', { params: { period } }).then((r) => setCharts(r.data));
-  };
-
-  useEffect(() => { fetchStats(); fetchOwners(); fetchCharts(); }, []);
-
-  const handlePeriodChange = (period) => {
-    setChartPeriod(period);
-    fetchCharts(period);
-  };
+  useEffect(() => { fetchStats(); fetchOwners(); }, []);
 
   const openModal = (owner, e) => {
     e?.stopPropagation();
@@ -79,6 +64,20 @@ export default function AdminOwners() {
 
   const closeDetail = () => {
     setDetailOwner(null);
+  };
+
+  const handleArchive = async (id, e) => {
+    e?.stopPropagation();
+    try {
+      await api.patch(`/admin/owners/${id}/archive`);
+      fetchOwners();
+      fetchStats();
+      if (detailOwner?.owner?.id === id) {
+        setDetailOwner((prev) => prev ? { ...prev, owner: { ...prev.owner, archived_at: prev.owner.archived_at ? null : new Date().toISOString() } } : prev);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to archive.');
+    }
   };
 
   const handleFormChange = (e) => {
@@ -185,108 +184,6 @@ export default function AdminOwners() {
         })}
       </div>
 
-      {/* ── Charts Section ── */}
-      {charts && (
-        <div className="mb-8">
-        {/* Period Filter Buttons */}
-        <div className="flex items-center gap-2 mb-5">
-          {['daily', 'weekly', 'monthly', 'yearly'].map((p) => (
-            <button
-              key={p}
-              onClick={() => handlePeriodChange(p)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                chartPeriod === p
-                  ? 'bg-green-600 text-white shadow-sm'
-                  : 'bg-white text-gray-600 border hover:bg-gray-50'
-              }`}
-            >
-              {p.charAt(0).toUpperCase() + p.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Equipment by Category – Bar Chart */}
-          <div className="bg-white rounded-xl shadow-sm border p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Equipment by Category</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={charts.equipment_by_category} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="category" tick={{ fontSize: 12 }} tickFormatter={(v) => v.charAt(0).toUpperCase() + v.slice(1)} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-                <Tooltip
-                  formatter={(value) => [value, 'Count']}
-                  labelFormatter={(l) => l.charAt(0).toUpperCase() + l.slice(1)}
-                  contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 13 }}
-                />
-                <Bar dataKey="count" fill="#16a34a" radius={[6, 6, 0, 0]} maxBarSize={40} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Equipment Status – Donut Chart */}
-          <div className="bg-white rounded-xl shadow-sm border p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Equipment Status Distribution</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <PieChart>
-                <Pie
-                  data={charts.equipment_by_status}
-                  cx="50%" cy="50%"
-                  innerRadius={55} outerRadius={90}
-                  paddingAngle={3}
-                  dataKey="count"
-                  nameKey="status"
-                  label={({ status, count }) => `${status} (${count})`}
-                >
-                  {charts.equipment_by_status.map((entry, i) => {
-                    const STATUS_COLORS = { available: '#16a34a', rented: '#2563eb', pending: '#eab308', maintenance: '#f97316', rejected: '#dc2626' };
-                    return <Cell key={entry.status} fill={STATUS_COLORS[entry.status] ?? '#9ca3af'} />;
-                  })}
-                </Pie>
-                <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 13 }} />
-                <Legend
-                  formatter={(value) => <span className="text-xs text-gray-600 capitalize">{value}</span>}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* New Owners Trend – Line Chart */}
-          <div className="bg-white rounded-xl shadow-sm border p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">
-              New Owners – {chartPeriod.charAt(0).toUpperCase() + chartPeriod.slice(1)}
-            </h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={charts.owners_trend} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 13 }} />
-                <Line type="monotone" dataKey="count" stroke="#16a34a" strokeWidth={2.5} dot={{ fill: '#16a34a', r: 4 }} activeDot={{ r: 6 }} name="New Owners" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Top Owners – Horizontal Bar */}
-          <div className="bg-white rounded-xl shadow-sm border p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Top Owners by Equipment</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart layout="vertical" data={charts.top_owners} margin={{ top: 5, right: 20, bottom: 5, left: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} />
-                <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12 }} />
-                <Tooltip
-                  formatter={(value) => [value, 'Equipment']}
-                  contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 13 }}
-                />
-                <Bar dataKey="equipment_count" fill="#7c3aed" radius={[0, 6, 6, 0]} maxBarSize={28} name="Equipment" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        </div>
-      )}
-
       {data.length === 0 ? (
         <div className="text-center py-12 text-gray-500">No registered owners yet.</div>
       ) : view === 'card' ? (
@@ -332,13 +229,26 @@ export default function AdminOwners() {
                   <Calendar className="w-3.5 h-3.5" />
                   Joined {new Date(owner.created_at).toLocaleDateString()}
                 </div>
-                <button
-                  onClick={(e) => openModal(owner, e)}
-                  className="flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  Add Equipment
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => handleArchive(owner.id, e)}
+                    className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg transition-colors ${
+                      owner.archived_at
+                        ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100'
+                        : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Archive className="w-3.5 h-3.5" />
+                    {owner.archived_at ? 'Unarchive' : 'Archive'}
+                  </button>
+                  <button
+                    onClick={(e) => openModal(owner, e)}
+                    className="flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add Equipment
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -400,13 +310,26 @@ export default function AdminOwners() {
               align: 'center',
               sortable: false,
               render: (row) => (
-                <button
-                  onClick={(e) => openModal(row, e)}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  Add Equipment
-                </button>
+                <div className="flex items-center justify-center gap-1.5">
+                  <button
+                    onClick={(e) => handleArchive(row.id, e)}
+                    className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg transition-colors ${
+                      row.archived_at
+                        ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100'
+                        : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Archive className="w-3.5 h-3.5" />
+                    {row.archived_at ? 'Unarchive' : 'Archive'}
+                  </button>
+                  <button
+                    onClick={(e) => openModal(row, e)}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add Equipment
+                  </button>
+                </div>
               ),
             },
           ]}
@@ -556,7 +479,7 @@ export default function AdminOwners() {
                   </div>
                 </div>
 
-                {/* Owner info */}
+                {/* Owner info + Archive action */}
                 <div className="px-6 pb-3">
                   <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
                     <div className="flex items-center gap-2 text-gray-500">
@@ -567,6 +490,19 @@ export default function AdminOwners() {
                       <ClipboardList className="w-4 h-4 shrink-0" />
                       <span>{detailOwner.total_rentals} total rental requests</span>
                     </div>
+                  </div>
+                  <div className="mt-3">
+                    <button
+                      onClick={(e) => handleArchive(detailOwner.owner.id, e)}
+                      className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+                        detailOwner.owner.archived_at
+                          ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200'
+                          : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200'
+                      }`}
+                    >
+                      <Archive className="w-3.5 h-3.5" />
+                      {detailOwner.owner.archived_at ? 'Unarchive Owner' : 'Archive Owner'}
+                    </button>
                   </div>
                 </div>
 

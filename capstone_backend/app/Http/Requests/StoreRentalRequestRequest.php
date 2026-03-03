@@ -16,12 +16,22 @@ class StoreRentalRequestRequest extends FormRequest
         return [
             'equipment_id'    => ['required', 'exists:equipment,id'],
             'contact_number'  => ['required', 'string', 'max:20'],
-            'rental_days'     => ['required', 'integer', 'min:1'],
+            'farm_size_sqm'   => ['required', 'numeric', 'min:100'],
             'start_date'      => ['required', 'date', 'after_or_equal:today'],
-            'end_date'        => ['required', 'date', 'after_or_equal:start_date'],
             'delivery_address'=> ['required', 'string', 'max:500'],
             'latitude'        => ['nullable', 'numeric', 'between:-90,90'],
             'longitude'       => ['nullable', 'numeric', 'between:-180,180'],
+            'payment_method'  => ['required', 'in:cod,gcash'],
+            'payment_proof'   => ['required_if:payment_method,gcash', 'nullable', 'image', 'max:5120'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'payment_proof.required_if' => 'GCash payment proof is required when paying via GCash.',
+            'payment_proof.image'       => 'Payment proof must be an image file.',
+            'payment_proof.max'         => 'Payment proof must not exceed 5 MB.',
         ];
     }
 }

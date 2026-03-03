@@ -26,7 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'points',
+        'archived_at',
     ];
 
     /**
@@ -52,7 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
-            'points' => 'integer',
+            'archived_at' => 'datetime',
         ];
     }
 
@@ -89,12 +89,6 @@ class User extends Authenticatable
     public function rentalRequests(): HasMany
     {
         return $this->hasMany(RentalRequest::class, 'renter_id');
-    }
-
-    /** Points purchase requests made by this renter */
-    public function pointsRequests(): HasMany
-    {
-        return $this->hasMany(PointsRequest::class, 'renter_id');
     }
 
     /** GCash settings for this owner */

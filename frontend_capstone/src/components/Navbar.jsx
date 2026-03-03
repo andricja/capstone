@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   Menu, X, Tractor, LogOut,
-  Home, Search, ClipboardList, Coins, Mail,
+  Home, Search, ClipboardList, Mail,
   Package, ClipboardCheck, Settings, Users, BarChart3,
   CheckCircle,
 } from 'lucide-react';
@@ -56,11 +56,7 @@ export default function Sidebar() {
           <div className="px-5 py-4 border-b border-green-700 shrink-0">
             <p className="text-sm font-semibold truncate">{user.name}</p>
             <p className="text-xs text-green-300 capitalize">{user.role}</p>
-            {user.role === 'renter' && (
-              <span className="inline-block mt-1 bg-yellow-500 text-black rounded px-2 py-0.5 text-xs font-bold">
-                {user.points} pts
-              </span>
-            )}
+
           </div>
         )}
 
@@ -108,7 +104,6 @@ function getNavLinks(role) {
         { to: '/renter/dashboard', label: 'Dashboard', icon: <Home className="w-5 h-5" /> },
         { to: '/renter/browse', label: 'Browse Equipment', icon: <Search className="w-5 h-5" /> },
         { to: '/renter/rentals', label: 'My Rentals', icon: <ClipboardList className="w-5 h-5" /> },
-        { to: '/renter/points', label: 'Buy Points', icon: <Coins className="w-5 h-5" /> },
         { to: '/renter/messages', label: 'Contact Us', icon: <Mail className="w-5 h-5" /> },
       ];
     case 'owner':

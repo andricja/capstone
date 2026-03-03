@@ -96,7 +96,7 @@ export default function AdminEquipment() {
     },
     {
       key: 'name',
-      label: 'Product',
+      label: 'Equipment',
       render: (row) => (
         <div className="flex items-center gap-2">
           {row.image ? (

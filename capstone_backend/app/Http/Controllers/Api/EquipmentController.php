@@ -21,7 +21,7 @@ class EquipmentController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Equipment::with('owner:id,name,email')
+        $query = Equipment::with('owner:id,name,email', 'owner.gcashSetting:id,owner_id,account_name,account_number,qr_code_image')
             ->approved(); // available, rented, maintenance (not pending/rejected)
 
         if ($request->filled('location')) {
@@ -34,6 +34,10 @@ class EquipmentController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
+        }
+
+        if ($request->boolean('all')) {
+            return response()->json($query->latest()->get());
         }
 
         $equipment = $query->latest()->paginate(15);

@@ -51,7 +51,7 @@ export default function GcashSettings() {
       )}
 
       <div className="bg-blue-50 rounded-lg p-4 mb-6 text-sm text-blue-800">
-        <p>These details will be shown to renters when they purchase points. Payments go directly to your GCash account.</p>
+        <p>These details will be shown to renters when they pay via GCash. Payments go directly to your GCash account.</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border p-6">

@@ -1,63 +1,203 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../lib/api';
-import { useAuth } from '../../contexts/AuthContext';
 import StatusBadge from '../../components/StatusBadge';
-import { Coins, ClipboardList, Truck, AlertTriangle } from 'lucide-react';
+import { ClipboardList, Truck, Coins, CheckCircle, Clock } from 'lucide-react';
+import {
+  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+} from 'recharts';
+
+const PIE_COLORS = ['#22c55e', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444', '#06b6d4'];
 
 export default function RenterDashboard() {
-  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState('yearly');
+
+  const periodLabels = { today: "Today's", weekly: "This Week's", monthly: "This Month's", yearly: 'Monthly' };
 
   useEffect(() => {
-    api.get('/dashboard').then((r) => setData(r.data)).finally(() => setLoading(false));
-  }, []);
+    setLoading(true);
+    api.get(`/dashboard?period=${period}`).then((r) => setData(r.data)).finally(() => setLoading(false));
+  }, [period]);
 
   if (loading) return <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>;
+
+  const charts = data?.charts || {};
+  const rentalChart = charts.rental_requests || [];
+  const spendingChart = charts.spending || [];
+  const topEquipment = charts.top_equipment || [];
+  const categoryDistribution = charts.category_distribution || [];
+  const paymentMethods = charts.payment_methods || [];
+
+  // Rental status pie data
+  const rentalStatusData = [
+    { name: 'Pending', value: data?.rental_requests?.forwarded || 0 },
+    { name: 'Approved', value: data?.rental_requests?.approved || 0 },
+    { name: 'Rejected', value: data?.rental_requests?.rejected || 0 },
+  ].filter((d) => d.value > 0);
+
+  // Payment method pie data
+  const paymentData = paymentMethods.map((p) => ({
+    name: p.payment_method === 'gcash' ? 'GCash' : 'COD',
+    value: p.count,
+  }));
+
+  const fmt = (v) => '₱' + parseFloat(v || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Renter Dashboard</h1>
 
-      {/* No points warning */}
-      {user.points === 0 && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
-          <div className="flex items-center">
-            <AlertTriangle className="text-yellow-400 text-xl mr-3" />
-            <div>
-              <p className="text-sm font-medium text-yellow-800">You have no points!</p>
-              <p className="text-sm text-yellow-700">You need at least 1 point to request equipment rentals. <Link to="/renter/points" className="underline font-medium">Buy Points</Link></p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={<Coins />} label="Points Balance" value={user.points} color="yellow" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
         <StatCard icon={<ClipboardList />} label="Total Rentals" value={data?.rental_requests?.total || 0} color="blue" />
-        <StatCard icon={<Truck />} label="Active Rentals" value={data?.rental_requests?.approved || 0} color="green" />
-        <StatCard icon={<ClipboardList />} label="Pending Requests" value={data?.rental_requests?.forwarded || 0} color="purple" />
+        <StatCard icon={<CheckCircle />} label="Approved" value={data?.rental_requests?.approved || 0} color="green" />
+        <StatCard icon={<Clock />} label="Pending" value={data?.rental_requests?.forwarded || 0} color="purple" />
+        <StatCard icon={<Truck />} label="Rejected" value={data?.rental_requests?.rejected || 0} color="yellow" />
+        <StatCard icon={<Coins />} label="Total Spent" value={fmt(data?.total_spending || 0)} color="green" />
       </div>
 
-      {/* Quick actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <Link to="/renter/equipment" className="bg-white rounded-xl shadow-sm border p-6 text-center hover:shadow-md transition-shadow">
-          <div className="text-3xl mb-2">🚜</div>
-          <h3 className="font-semibold text-gray-900">Browse Equipment</h3>
-          <p className="text-sm text-gray-500 mt-1">Find available equipment near you</p>
-        </Link>
-        <Link to="/renter/points" className="bg-white rounded-xl shadow-sm border p-6 text-center hover:shadow-md transition-shadow">
-          <div className="text-3xl mb-2">💰</div>
-          <h3 className="font-semibold text-gray-900">Buy Points</h3>
-          <p className="text-sm text-gray-500 mt-1">Purchase points via GCash</p>
-        </Link>
-        <Link to="/renter/messages" className="bg-white rounded-xl shadow-sm border p-6 text-center hover:shadow-md transition-shadow">
-          <div className="text-3xl mb-2">✉️</div>
-          <h3 className="font-semibold text-gray-900">Contact Us</h3>
-          <p className="text-sm text-gray-500 mt-1">Send an inquiry or question</p>
-        </Link>
+      {/* ═══════════ CHARTS ═══════════ */}
+
+      {/* Period Filter */}
+      <div className="flex items-center gap-2 mb-6">
+        <span className="text-sm font-medium text-gray-500 mr-2">Period:</span>
+        {['today', 'weekly', 'monthly', 'yearly'].map((p) => (
+          <button
+            key={p}
+            onClick={() => setPeriod(p)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
+              period === p
+                ? 'bg-green-600 text-white shadow-sm'
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+
+      {/* Row 1: Rental Requests (bar) + Spending (line) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Rental Requests</h2>
+          {rentalChart.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={rentalChart} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="forwarded" name="Pending" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="approved" name="Approved" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="rejected" name="Rejected" fill="#ef4444" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-gray-400 py-12">No rental data yet.</p>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Spending</h2>
+          {spendingChart.some((m) => m.spending > 0) ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={spendingChart} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tickFormatter={(v) => fmt(v)} tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(v) => fmt(v)} />
+                <Legend />
+                <Line type="monotone" dataKey="spending" name="Spending" stroke="#22c55e" strokeWidth={2.5} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-gray-400 py-12">No spending data yet.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Row 2: Top Equipment (horizontal bar) + Rental Status (pie) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">Top Equipment by Spending</h2>
+          {topEquipment.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={topEquipment} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis type="number" tickFormatter={(v) => fmt(v)} tick={{ fontSize: 12 }} />
+                <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11 }} />
+                <Tooltip formatter={(v, n) => n === 'spending' ? fmt(v) : v} />
+                <Legend />
+                <Bar dataKey="spending" name="Spending" fill="#22c55e" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="rentals" name="Rentals" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-gray-400 py-12">No spending data yet.</p>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">Rental Request Status</h2>
+          {rentalStatusData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie data={rentalStatusData} cx="50%" cy="50%" innerRadius={55} outerRadius={100} paddingAngle={3}
+                  dataKey="value" nameKey="name" label={({ name, value }) => `${name}: ${value}`}>
+                  {rentalStatusData.map((_, i) => <Cell key={i} fill={['#3b82f6', '#22c55e', '#ef4444'][i]} />)}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-gray-400 py-12">No rental requests yet.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Row 3: Category Distribution (pie) + Payment Methods (pie) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">Equipment Categories Rented</h2>
+          {categoryDistribution.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie data={categoryDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={100} paddingAngle={3}
+                  dataKey="count" nameKey="category" label={({ category, count }) => `${category}: ${count}`}>
+                  {categoryDistribution.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-gray-400 py-12">No rental data yet.</p>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">{periodLabels[period]} Payment Methods</h2>
+          {paymentData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie data={paymentData} cx="50%" cy="50%" innerRadius={55} outerRadius={100} paddingAngle={3}
+                  dataKey="value" nameKey="name" label={({ name, value }) => `${name}: ${value}`}>
+                  {paymentData.map((_, i) => <Cell key={i} fill={['#f59e0b', '#3b82f6'][i]} />)}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-gray-400 py-12">No payment data yet.</p>
+          )}
+        </div>
       </div>
 
       {/* Recent rentals */}
@@ -71,7 +211,7 @@ export default function RenterDashboard() {
               <div key={r.id} className="px-6 py-4 flex items-center justify-between">
                 <div>
                   <p className="font-medium text-gray-900">{r.equipment?.name}</p>
-                  <p className="text-sm text-gray-500">{r.start_date} — {r.end_date}</p>
+                  <p className="text-sm text-gray-500">{fmtDate(r.start_date)}{r.rental_days > 1 ? ` — ${fmtDate(r.end_date)}` : ''}</p>
                 </div>
                 <StatusBadge status={r.status} />
               </div>

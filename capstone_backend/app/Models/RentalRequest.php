@@ -14,6 +14,8 @@ class RentalRequest extends Model
         'renter_id',
         'equipment_id',
         'contact_number',
+        'farm_size_sqm',
+        'estimated_hours',
         'rental_days',
         'start_date',
         'end_date',
@@ -21,7 +23,12 @@ class RentalRequest extends Model
         'latitude',
         'longitude',
         'total_cost',
+        'base_cost',
+        'delivery_fee',
+        'service_charge',
         'status',
+        'payment_method',
+        'payment_proof',
     ];
 
     protected function casts(): array
@@ -30,6 +37,11 @@ class RentalRequest extends Model
             'start_date' => 'date',
             'end_date' => 'date',
             'total_cost' => 'decimal:2',
+            'base_cost' => 'decimal:2',
+            'delivery_fee' => 'decimal:2',
+            'service_charge' => 'decimal:2',
+            'farm_size_sqm' => 'decimal:2',
+            'estimated_hours' => 'decimal:2',
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'rental_days' => 'integer',

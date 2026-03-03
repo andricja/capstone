@@ -32,7 +32,6 @@ class AuthController extends Controller
             'email'    => $validated['email'],
             'password' => $validated['password'], // auto-hashed via cast
             'role'     => $validated['role'],
-            'points'   => 0,
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
@@ -85,6 +84,21 @@ class AuthController extends Controller
     public function user(Request $request): JsonResponse
     {
         return response()->json($request->user());
+    }
+
+    /**
+     * Toggle archive status on an owner (admin only).
+     */
+    public function archiveOwner(int $id): JsonResponse
+    {
+        $owner = User::where('role', 'owner')->findOrFail($id);
+        $owner->archived_at = $owner->archived_at ? null : now();
+        $owner->save();
+
+        return response()->json([
+            'message'     => $owner->archived_at ? 'Owner archived.' : 'Owner unarchived.',
+            'archived_at' => $owner->archived_at,
+        ]);
     }
 
     /**

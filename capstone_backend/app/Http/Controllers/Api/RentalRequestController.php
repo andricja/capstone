@@ -21,28 +21,25 @@ class RentalRequestController extends Controller
      */
     public function myRequests(Request $request): JsonResponse
     {
-        $requests = $request->user()
+        $query = $request->user()
             ->rentalRequests()
             ->with('equipment:id,name,category,image,daily_rate,transportation_fee,location,status', 'equipment.owner:id,name,email')
-            ->latest()
-            ->paginate(15);
+            ->latest();
 
-        return response()->json($requests);
+        if ($request->boolean('all')) {
+            return response()->json($query->get());
+        }
+
+        return response()->json($query->paginate(15));
     }
 
     /**
-     * Create a new rental request (renter must have >= 1 point, equipment must be available).
+     * Create a new rental request.
+     * Renter inputs farm size (sqm) → system auto-calculates hours, days, costs.
      */
     public function store(StoreRentalRequestRequest $request): JsonResponse
     {
         $user = $request->user();
-
-        // Must have at least 1 point
-        if ($user->points < 1) {
-            return response()->json([
-                'message' => 'You need at least 1 point to request a rental. Please purchase points first.',
-            ], 422);
-        }
 
         $equipment = Equipment::findOrFail($request->input('equipment_id'));
 
@@ -53,22 +50,57 @@ class RentalRequestController extends Controller
             ], 422);
         }
 
-        // Calculate total cost: (daily_rate * rental_days) + transportation_fee
-        $rentalDays = $request->input('rental_days');
-        $totalCost  = ($equipment->daily_rate * $rentalDays) + $equipment->transportation_fee;
+        $farmSizeSqm = (float) $request->input('farm_size_sqm');
+
+        // ── Coverage rates per category (sqm per hour) ──
+        $coverageRates = [
+            'tractor'    => 2000,  // 2,000 sqm/hr
+            'harvester'  => 1500,  // 1,500 sqm/hr
+            'planter'    => 1200,  // 1,200 sqm/hr
+            'irrigation' => 2500,  // 2,500 sqm/hr
+            'cultivator' => 1000,  // 1,000 sqm/hr
+            'sprayer'    => 3000,  // 3,000 sqm/hr
+            'trailer'    => 5000,  // 5,000 sqm/hr (hauling capacity)
+            'other'      => 1500,
+        ];
+
+        $ratePerHour = $coverageRates[$equipment->category] ?? 1500;
+        $estimatedHours = ceil(($farmSizeSqm / $ratePerHour) * 10) / 10; // round up to 1 decimal
+        $estimatedHours = max($estimatedHours, 1); // minimum 1 hour
+        $rentalDays = (int) ceil($estimatedHours / 8); // 8 working hours per day
+        $rentalDays = max($rentalDays, 1); // minimum 1 day
+
+        // ── Cost breakdown ──
+        $baseCost       = $equipment->daily_rate * $rentalDays;
+        $deliveryFee    = (float) $equipment->transportation_fee;
+        $serviceCharge  = round($baseCost * 0.05, 2); // 5% service charge
+        $totalCost      = $baseCost + $deliveryFee + $serviceCharge;
+
+        // Auto-calculate end date from start date + rental days
+        $startDate = \Carbon\Carbon::parse($request->input('start_date'));
+        $endDate   = $startDate->copy()->addDays($rentalDays);
 
         $rentalRequest = RentalRequest::create([
             'renter_id'        => $user->id,
             'equipment_id'     => $equipment->id,
             'contact_number'   => $request->input('contact_number'),
+            'farm_size_sqm'    => $farmSizeSqm,
+            'estimated_hours'  => $estimatedHours,
             'rental_days'      => $rentalDays,
-            'start_date'       => $request->input('start_date'),
-            'end_date'         => $request->input('end_date'),
+            'start_date'       => $startDate,
+            'end_date'         => $endDate,
             'delivery_address' => $request->input('delivery_address'),
             'latitude'         => $request->input('latitude'),
             'longitude'        => $request->input('longitude'),
+            'base_cost'        => $baseCost,
+            'delivery_fee'     => $deliveryFee,
+            'service_charge'   => $serviceCharge,
             'total_cost'       => $totalCost,
-            'status'           => 'forwarded', // "Forwarded to Owner"
+            'status'           => 'forwarded',
+            'payment_method'   => $request->input('payment_method'),
+            'payment_proof'    => $request->hasFile('payment_proof')
+                                    ? $request->file('payment_proof')->store('payment_proofs', 'public')
+                                    : null,
         ]);
 
         $rentalRequest->load('equipment:id,name,category,daily_rate,transportation_fee');
@@ -77,11 +109,14 @@ class RentalRequestController extends Controller
             'message'        => 'Rental request submitted and forwarded to the equipment owner.',
             'rental_request' => $rentalRequest,
             'cost_breakdown' => [
-                'daily_rate'         => $equipment->daily_rate,
-                'rental_days'        => $rentalDays,
-                'subtotal'           => $equipment->daily_rate * $rentalDays,
-                'transportation_fee' => $equipment->transportation_fee,
-                'total_cost'         => $totalCost,
+                'farm_size_sqm'    => $farmSizeSqm,
+                'estimated_hours'  => $estimatedHours,
+                'rental_days'      => $rentalDays,
+                'daily_rate'       => $equipment->daily_rate,
+                'base_cost'        => $baseCost,
+                'delivery_fee'     => $deliveryFee,
+                'service_charge'   => $serviceCharge,
+                'total_cost'       => $totalCost,
             ],
         ], 201);
     }
@@ -97,20 +132,22 @@ class RentalRequestController extends Controller
     {
         $equipmentIds = $request->user()->equipment()->pluck('id');
 
-        $requests = RentalRequest::with([
+        $query = RentalRequest::with([
                 'renter:id,name,email',
                 'equipment:id,name,category,daily_rate,transportation_fee,location',
             ])
             ->whereIn('equipment_id', $equipmentIds)
-            ->latest()
-            ->paginate(15);
+            ->latest();
 
-        return response()->json($requests);
+        if ($request->boolean('all')) {
+            return response()->json($query->get());
+        }
+
+        return response()->json($query->paginate(15));
     }
 
     /**
      * Owner approves a rental request.
-     * - Deducts exactly 1 point from renter.
      * - Sets equipment status to "rented".
      * - Sets rental status to "approved".
      */
@@ -126,33 +163,23 @@ class RentalRequestController extends Controller
             return response()->json(['message' => 'Only forwarded requests can be approved.'], 422);
         }
 
-        $renter = $rentalRequest->renter;
-        if ($renter->points < 1) {
-            return response()->json([
-                'message' => 'The renter does not have enough points. Cannot approve.',
-            ], 422);
-        }
-
-        // Execute all three actions atomically
-        DB::transaction(function () use ($renter, $equipment, $rentalRequest) {
-            // 1) Deduct 1 point from renter
-            $renter->decrement('points', 1);
-
-            // 2) Set equipment to "rented"
+        // Execute atomically
+        DB::transaction(function () use ($equipment, $rentalRequest) {
+            // 1) Set equipment to "rented"
             $equipment->update(['status' => 'rented']);
 
-            // 3) Set rental request to "approved"
+            // 2) Set rental request to "approved"
             $rentalRequest->update(['status' => 'approved']);
         });
 
         return response()->json([
-            'message'        => 'Rental request approved. 1 point deducted from renter. Equipment marked as rented.',
-            'rental_request' => $rentalRequest->fresh()->load('renter:id,name,email,points', 'equipment:id,name,status'),
+            'message'        => 'Rental request approved. Equipment marked as rented.',
+            'rental_request' => $rentalRequest->fresh()->load('renter:id,name,email', 'equipment:id,name,status'),
         ]);
     }
 
     /**
-     * Owner rejects a rental request (no points deducted, equipment stays available).
+     * Owner rejects a rental request (equipment stays available).
      */
     public function reject(Request $request, RentalRequest $rentalRequest): JsonResponse
     {
@@ -168,7 +195,7 @@ class RentalRequestController extends Controller
         $rentalRequest->update(['status' => 'rejected']);
 
         return response()->json([
-            'message'        => 'Rental request rejected. No points were deducted.',
+            'message'        => 'Rental request rejected.',
             'rental_request' => $rentalRequest->fresh(),
         ]);
     }
