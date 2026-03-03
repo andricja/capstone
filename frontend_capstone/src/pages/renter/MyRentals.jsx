@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
+import { ListPageSkeleton } from '../../components/Skeleton';
 import RentalReceiptModal from '../../components/RentalReceiptModal';
 import { Eye, LayoutGrid, Table, Banknote } from 'lucide-react';
 
@@ -72,7 +73,7 @@ export default function MyRentals() {
   };
   const sortIcon = (col) => sortCol === col ? (sortDir === 'asc' ? ' ▲' : ' ▼') : '';
 
-  if (loading) return <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>;
+  if (loading) return <ListPageSkeleton cols={5} rows={6} />;
 
   return (
     <div>

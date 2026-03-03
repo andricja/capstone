@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
+import { TableSkeleton } from '../../components/Skeleton';
 import Pagination from '../../components/Pagination';
 
 export default function RenterMessages() {
@@ -85,7 +86,7 @@ export default function RenterMessages() {
             <h2 className="font-semibold text-gray-900">My Inquiries</h2>
           </div>
           {loading ? (
-            <div className="p-6 text-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600 mx-auto" /></div>
+            <TableSkeleton rows={4} cols={3} />
           ) : messages?.data?.length === 0 ? (
             <div className="p-6 text-center text-gray-500 text-sm">No inquiries yet.</div>
           ) : (

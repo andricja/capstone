@@ -1,0 +1,358 @@
+import { useEffect, useState } from 'react';
+import api from '../../lib/api';
+import DataTable from '../../components/DataTable';
+import { TableSkeleton } from '../../components/Skeleton';
+import StatusBadge from '../../components/StatusBadge';
+import { UserCheck, UserX, Users, Clock, ShieldCheck, ShieldX, X, Mail } from 'lucide-react';
+
+export default function AdminAccounts() {
+  const [data, setData] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [filter, setFilter] = useState('email_verified');
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState('');
+  const [selected, setSelected] = useState(null);
+  const [rejectModal, setRejectModal] = useState(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const fetchAccounts = (f = filter) => {
+    setLoading(true);
+    api.get('/admin/accounts', { params: { status: f, all: 1 } })
+      .then((r) => setData(Array.isArray(r.data) ? r.data : r.data?.data ?? []))
+      .finally(() => setLoading(false));
+  };
+
+  const fetchStats = () => {
+    api.get('/admin/accounts/stats').then((r) => setStats(r.data));
+  };
+
+  useEffect(() => { fetchAccounts(filter); fetchStats(); }, [filter]);
+
+  const handleApprove = async (id, e) => {
+    e?.stopPropagation();
+    setActionLoading(true);
+    try {
+      const res = await api.patch(`/admin/accounts/${id}/approve`);
+      setMessage(res.data.message);
+      fetchAccounts(filter);
+      fetchStats();
+      if (selected?.id === id) setSelected(null);
+    } catch (err) {
+      setMessage(err.response?.data?.message || 'Failed to approve.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const openRejectModal = (user, e) => {
+    e?.stopPropagation();
+    setRejectModal(user);
+    setRejectReason('');
+  };
+
+  const handleReject = async () => {
+    if (!rejectModal) return;
+    setActionLoading(true);
+    try {
+      const res = await api.patch(`/admin/accounts/${rejectModal.id}/reject`, { reason: rejectReason });
+      setMessage(res.data.message);
+      fetchAccounts(filter);
+      fetchStats();
+      setRejectModal(null);
+      if (selected?.id === rejectModal.id) setSelected(null);
+    } catch (err) {
+      setMessage(err.response?.data?.message || 'Failed to reject.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const statusColor = (status) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-700';
+      case 'email_verified': return 'bg-blue-100 text-blue-700';
+      case 'approved': return 'bg-green-100 text-green-700';
+      case 'rejected': return 'bg-red-100 text-red-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const statusLabel = (status) => {
+    switch (status) {
+      case 'pending': return 'Pending Verification';
+      case 'email_verified': return 'Awaiting Approval';
+      case 'approved': return 'Approved';
+      case 'rejected': return 'Rejected';
+      default: return status;
+    }
+  };
+
+  const statCards = [
+    { label: 'Pending Verification', value: stats?.pending ?? 0, icon: <Clock className="w-5 h-5" />, color: 'bg-yellow-50 text-yellow-600 ring-yellow-200' },
+    { label: 'Awaiting Approval', value: stats?.email_verified ?? 0, icon: <Mail className="w-5 h-5" />, color: 'bg-blue-50 text-blue-600 ring-blue-200' },
+    { label: 'Approved', value: stats?.approved ?? 0, icon: <ShieldCheck className="w-5 h-5" />, color: 'bg-green-50 text-green-600 ring-green-200' },
+    { label: 'Rejected', value: stats?.rejected ?? 0, icon: <ShieldX className="w-5 h-5" />, color: 'bg-red-50 text-red-600 ring-red-200' },
+  ];
+
+  const columns = [
+    {
+      key: 'name',
+      label: 'Name',
+      render: (row) => (
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm shrink-0">
+            {row.name?.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p className="font-medium text-gray-900">{row.name}</p>
+            <p className="text-xs text-gray-500">{row.email}</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'role',
+      label: 'Role',
+      align: 'center',
+      render: (row) => (
+        <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+          {row.role}
+        </span>
+      ),
+    },
+    {
+      key: 'account_status',
+      label: 'Status',
+      align: 'center',
+      render: (row) => (
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusColor(row.account_status)}`}>
+          {statusLabel(row.account_status)}
+        </span>
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Registered',
+      render: (row) => (
+        <span className="text-gray-500 text-xs">
+          {new Date(row.created_at).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}
+        </span>
+      ),
+    },
+    {
+      key: '_action',
+      label: 'Action',
+      align: 'center',
+      sortable: false,
+      render: (row) => (
+        <div className="flex items-center justify-center gap-1.5">
+          {(row.account_status === 'email_verified' || row.account_status === 'rejected') && (
+            <button
+              onClick={(e) => handleApprove(row.id, e)}
+              disabled={actionLoading}
+              className="text-green-600 hover:bg-green-50 px-2 py-1 rounded text-xs font-medium border border-green-200 disabled:opacity-50"
+            >
+              Approve
+            </button>
+          )}
+          {(row.account_status === 'email_verified' || row.account_status === 'approved') && (
+            <button
+              onClick={(e) => openRejectModal(row, e)}
+              disabled={actionLoading}
+              className="text-red-600 hover:bg-red-50 px-2 py-1 rounded text-xs font-medium border border-red-200 disabled:opacity-50"
+            >
+              Reject
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <Users className="w-7 h-7 text-green-600" />
+        <h1 className="text-2xl font-bold text-gray-900">Account Management</h1>
+      </div>
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        {statCards.map((card) => (
+          <div key={card.label} className="bg-white rounded-xl shadow-sm border p-4 flex items-center gap-3">
+            <div className={`${card.color} p-2.5 rounded-lg ring-1`}>
+              {card.icon}
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+              <p className="text-xs text-gray-500">{card.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Filter Buttons */}
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
+        {[
+          { label: 'Awaiting Approval', value: 'email_verified' },
+          { label: 'Pending Verification', value: 'pending' },
+          { label: 'Approved', value: 'approved' },
+          { label: 'Rejected', value: 'rejected' },
+          { label: 'All', value: 'all' },
+        ].map((btn) => (
+          <button
+            key={btn.value}
+            onClick={() => setFilter(btn.value)}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+              filter === btn.value
+                ? 'bg-green-600 text-white border-green-600'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+            }`}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Feedback message */}
+      {message && (
+        <div className="mb-4 px-4 py-3 rounded-lg text-sm bg-green-50 text-green-700">
+          {message}
+        </div>
+      )}
+
+      {/* Table */}
+      {loading ? (
+        <TableSkeleton rows={8} cols={5} />
+      ) : (
+        <DataTable
+          columns={columns}
+          data={data}
+          onRowClick={(row) => setSelected(row)}
+          searchKeys={['name', 'email', 'role', 'account_status']}
+          defaultSort={{ key: 'created_at', dir: 'desc' }}
+          emptyMessage="No accounts found."
+        />
+      )}
+
+      {/* ── Detail Modal ── */}
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelected(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xl">
+                  {selected.name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">{selected.name}</h2>
+                  <p className="text-sm text-gray-500">{selected.email}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statusColor(selected.account_status)}`}>
+                  {statusLabel(selected.account_status)}
+                </span>
+                <span className="text-xs text-gray-400">
+                  {new Date(selected.created_at).toLocaleString('en-PH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Role</p>
+                  <p className="text-gray-700 capitalize">{selected.role}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Email Verified</p>
+                  <p className="text-gray-700">{selected.email_verified_at ? 'Yes' : 'No'}</p>
+                </div>
+              </div>
+
+              {selected.admin_rejection_reason && (
+                <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded-r-lg">
+                  <p className="text-xs font-semibold uppercase text-red-400 mb-1">Rejection Reason</p>
+                  <p className="text-sm text-red-700">{selected.admin_rejection_reason}</p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 flex-wrap pt-2 border-t">
+                {(selected.account_status === 'email_verified' || selected.account_status === 'rejected') && (
+                  <button
+                    onClick={(e) => handleApprove(selected.id, e)}
+                    disabled={actionLoading}
+                    className="text-green-600 hover:bg-green-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-green-200 flex items-center gap-1 disabled:opacity-50"
+                  >
+                    <UserCheck className="w-3.5 h-3.5" /> Approve
+                  </button>
+                )}
+                {(selected.account_status === 'email_verified' || selected.account_status === 'approved') && (
+                  <button
+                    onClick={(e) => openRejectModal(selected, e)}
+                    disabled={actionLoading}
+                    className="text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-red-200 flex items-center gap-1 disabled:opacity-50"
+                  >
+                    <UserX className="w-3.5 h-3.5" /> Reject
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Reject Reason Modal ── */}
+      {rejectModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setRejectModal(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b">
+              <h2 className="text-lg font-bold text-gray-900">Reject Account</h2>
+              <button onClick={() => setRejectModal(null)} className="text-gray-400 hover:text-gray-600 p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Rejecting <span className="font-semibold text-gray-900">{rejectModal.name}</span> ({rejectModal.email}).
+                The user will receive an email with the reason below.
+              </p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+                <textarea
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  rows={3}
+                  placeholder="Enter the reason for rejection..."
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setRejectModal(null)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleReject}
+                  disabled={actionLoading}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg flex items-center gap-1"
+                >
+                  <UserX className="w-4 h-4" /> Reject Account
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

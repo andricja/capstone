@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Tractor, X } from 'lucide-react';
 
-export default function LoginModal({ open, onClose, onSwitchToRegister }) {
+export default function LoginModal({ open, onClose, onSwitchToRegister, onVerifyEmail }) {
   const { login } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -18,7 +18,13 @@ export default function LoginModal({ open, onClose, onSwitchToRegister }) {
       await login(form.email, form.password);
       onClose();
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      const data = err.response?.data;
+      if (data?.requires_verification && onVerifyEmail) {
+        onVerifyEmail(data.email || form.email);
+        onClose();
+        return;
+      }
+      setError(data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }

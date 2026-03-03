@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import DataTable from '../../components/DataTable';
+import { ListPageSkeleton } from '../../components/Skeleton';
 import { Users, UserPlus, Tractor, Mail, Calendar, LayoutGrid, Table, ClipboardList, Plus, X, MapPin, DollarSign, Eye, Truck, Tag, FileText, Clock, Archive } from 'lucide-react';
 
 const CATEGORIES = ['tractor','harvester','planter','irrigation','cultivator','sprayer','trailer','other'];
@@ -108,13 +109,7 @@ export default function AdminOwners() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" />
-      </div>
-    );
-  }
+  if (loading) return <ListPageSkeleton statCount={4} cols={5} rows={6} />;
 
   const statCards = [
     { label: 'Total Owners',      value: stats?.total_owners ?? 0,          icon: <Users className="w-6 h-6" />,          color: 'green' },

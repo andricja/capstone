@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
+import { TableSkeleton } from '../../components/Skeleton';
 import DataTable from '../../components/DataTable';
 import ReceiptModal from '../../components/ReceiptModal';
 import { Check, X, ListFilter, Clock, CheckCircle, LayoutList, DollarSign, Receipt, Eye } from 'lucide-react';
@@ -210,9 +211,7 @@ export default function AdminEquipment() {
       )}
 
       {loading ? (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" />
-        </div>
+        <TableSkeleton rows={8} cols={5} />
       ) : (
         <DataTable
           columns={columns}

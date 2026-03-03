@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../lib/api';
+import { DashboardSkeleton } from '../../components/Skeleton';
 import { Truck, ClipboardCheck, Settings, CheckCircle } from 'lucide-react';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
@@ -21,7 +22,7 @@ export default function OwnerDashboard() {
     api.get(`/dashboard?period=${period}`).then((r) => setData(r.data)).finally(() => setLoading(false));
   }, [period]);
 
-  if (loading) return <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>;
+  if (loading) return <DashboardSkeleton statCount={4} />;
 
   const charts = data?.charts || {};
   const monthlyRentals = charts.monthly_rentals || [];

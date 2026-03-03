@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
+import { TableSkeleton } from '../../components/Skeleton';
 import Pagination from '../../components/Pagination';
 import { Check, X } from 'lucide-react';
 
@@ -54,7 +55,7 @@ export default function AdminPoints() {
       )}
 
       {loading ? (
-        <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>
+        <TableSkeleton rows={6} cols={6} />
       ) : data?.data?.length === 0 ? (
         <div className="text-center py-12 text-gray-500">No points requests found.</div>
       ) : (

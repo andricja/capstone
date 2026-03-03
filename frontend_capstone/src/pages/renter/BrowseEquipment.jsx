@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
+import { CardGridSkeleton } from '../../components/Skeleton';
 import { Search, MapPin, Ruler, Clock, Calendar, Truck, Calculator, LayoutGrid, Table, Banknote, Upload, ImageIcon } from 'lucide-react';
 
 const CATEGORIES = ['', 'tractor', 'harvester', 'planter', 'irrigation', 'cultivator', 'sprayer', 'trailer', 'other'];
@@ -194,7 +195,7 @@ export default function BrowseEquipment() {
 
       {/* Equipment listing */}
       {loading ? (
-        <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>
+        <CardGridSkeleton count={6} />
       ) : allEquipment.length === 0 ? (
         <div className="text-center py-12 text-gray-500">No equipment found matching your filters.</div>
       ) : viewMode === 'card' ? (

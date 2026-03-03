@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import DataTable from '../../components/DataTable';
+import { TableSkeleton } from '../../components/Skeleton';
 import { Download, BarChart3, DollarSign, Tractor, TrendingUp } from 'lucide-react';
 
 export default function AdminReports() {
@@ -184,7 +185,7 @@ export default function AdminReports() {
 
       {/* Transactions DataTable */}
       {loading ? (
-        <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>
+        <TableSkeleton rows={8} cols={5} />
       ) : (
         <DataTable
           columns={columns}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
+import { FormSkeleton } from '../../components/Skeleton';
 
 export default function GcashSettings() {
   const [setting, setSetting] = useState(null);
@@ -38,7 +39,7 @@ export default function GcashSettings() {
     }
   };
 
-  if (loading) return <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>;
+  if (loading) return <FormSkeleton fields={4} />;
 
   return (
     <div className="max-w-xl mx-auto">

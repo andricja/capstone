@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\DynamicMailer;
+use App\Mail\EmailVerificationCode;
 use App\Models\Equipment;
 use App\Models\RentalRequest;
 use App\Models\User;
@@ -17,6 +19,7 @@ class AuthController extends Controller
 {
     /**
      * Register a new user (renter or owner).
+     * Sends a 6-digit email verification code instead of auto-login.
      */
     public function register(Request $request): JsonResponse
     {
@@ -27,24 +30,127 @@ class AuthController extends Controller
             'role'     => ['required', 'in:renter,owner'],
         ]);
 
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => $validated['password'], // auto-hashed via cast
-            'role'     => $validated['role'],
+            'name'                    => $validated['name'],
+            'email'                   => $validated['email'],
+            'password'                => $validated['password'],
+            'role'                    => $validated['role'],
+            'account_status'          => 'pending',
+            'email_verification_code' => $code,
+            'email_code_expires_at'   => now()->addMinutes(15),
         ]);
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        // Send verification email
+        try {
+            DynamicMailer::send(
+                new EmailVerificationCode($user->name, $code),
+                $user->email
+            );
+        } catch (\Throwable $e) {
+            // If mail fails, still return success but note the issue
+            return response()->json([
+                'message'      => 'Registration successful but verification email could not be sent. Please contact admin.',
+                'requires_verification' => true,
+                'email'        => $user->email,
+            ], 201);
+        }
 
         return response()->json([
-            'message' => 'Registration successful.',
-            'user'    => $user,
-            'token'   => $token,
+            'message'      => 'Registration successful! A verification code has been sent to your email.',
+            'requires_verification' => true,
+            'email'        => $user->email,
         ], 201);
     }
 
     /**
+     * Verify the email with the 6-digit code.
+     */
+    public function verifyEmail(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'code'  => ['required', 'string', 'size:6'],
+        ]);
+
+        $user = User::where('email', $validated['email'])
+            ->where('account_status', 'pending')
+            ->first();
+
+        if (! $user) {
+            return response()->json(['message' => 'User not found or already verified.'], 404);
+        }
+
+        if ($user->email_verification_code !== $validated['code']) {
+            return response()->json(['message' => 'Invalid verification code.'], 422);
+        }
+
+        if ($user->email_code_expires_at && $user->email_code_expires_at->isPast()) {
+            return response()->json(['message' => 'Verification code has expired. Please register again.'], 422);
+        }
+
+        // Renters are auto-approved; owners need admin approval
+        $newStatus = $user->role === 'renter' ? 'approved' : 'email_verified';
+
+        $user->update([
+            'account_status'          => $newStatus,
+            'email_verified_at'       => now(),
+            'email_verification_code' => null,
+            'email_code_expires_at'   => null,
+        ]);
+
+        if ($newStatus === 'approved') {
+            return response()->json([
+                'message'       => 'Email verified! Your account is ready — you can now log in.',
+                'auto_approved' => true,
+            ]);
+        }
+
+        return response()->json([
+            'message'       => 'Email verified! Your account is now pending admin approval.',
+            'auto_approved' => false,
+        ]);
+    }
+
+    /**
+     * Resend the verification code.
+     */
+    public function resendVerificationCode(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $user = User::where('email', $validated['email'])
+            ->where('account_status', 'pending')
+            ->first();
+
+        if (! $user) {
+            return response()->json(['message' => 'User not found or already verified.'], 404);
+        }
+
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $user->update([
+            'email_verification_code' => $code,
+            'email_code_expires_at'   => now()->addMinutes(15),
+        ]);
+
+        try {
+            DynamicMailer::send(
+                new EmailVerificationCode($user->name, $code),
+                $user->email
+            );
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Failed to send verification email. Please try again.'], 500);
+        }
+
+        return response()->json(['message' => 'A new verification code has been sent to your email.']);
+    }
+
+    /**
      * Authenticate user and return token.
+     * Only approved accounts (or admin) can log in.
      */
     public function login(Request $request): JsonResponse
     {
@@ -58,7 +164,40 @@ class AuthController extends Controller
         }
 
         /** @var User $user */
-        $user  = Auth::user();
+        $user = Auth::user();
+
+        // Allow admin to always login
+        if ($user->role !== 'admin') {
+            if ($user->account_status === 'pending') {
+                Auth::guard('web')->logout();
+                return response()->json([
+                    'message'      => 'Please verify your email first.',
+                    'requires_verification' => true,
+                    'email'        => $user->email,
+                ], 403);
+            }
+
+            if ($user->account_status === 'email_verified') {
+                Auth::guard('web')->logout();
+                return response()->json([
+                    'message' => 'Your account is pending admin approval. You will receive an email once approved.',
+                    'pending_approval' => true,
+                ], 403);
+            }
+
+            if ($user->account_status === 'rejected') {
+                Auth::guard('web')->logout();
+                return response()->json([
+                    'message' => 'Your account has been rejected. Please contact the administrator.',
+                ], 403);
+            }
+
+            if ($user->account_status !== 'approved') {
+                Auth::guard('web')->logout();
+                return response()->json(['message' => 'Account not active.'], 403);
+            }
+        }
+
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './auth/LoginModal';
 import RegisterModal from './auth/RegisterModal';
+import VerifyEmailModal from './auth/VerifyEmailModal';
 import {
   Tractor,
   Search,
@@ -20,7 +21,8 @@ import {
 export default function LandingPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [modal, setModal] = useState(null); // 'login' | 'register' | null
+  const [modal, setModal] = useState(null); // 'login' | 'register' | 'verify' | null
+  const [verifyEmail, setVerifyEmail] = useState('');
 
   const dashPath = user
     ? user.role === 'admin'
@@ -33,6 +35,10 @@ export default function LandingPage() {
   const openLogin = () => setModal('login');
   const openRegister = () => setModal('register');
   const handleClose = () => setModal(null);
+  const handleVerifyEmail = (email) => {
+    setVerifyEmail(email);
+    setModal('verify');
+  };
 
   // Auto-redirect to dashboard when user logs in / registers
   useEffect(() => {
@@ -214,11 +220,18 @@ export default function LandingPage() {
         open={modal === 'login'}
         onClose={handleClose}
         onSwitchToRegister={() => setModal('register')}
+        onVerifyEmail={handleVerifyEmail}
       />
       <RegisterModal
         open={modal === 'register'}
         onClose={handleClose}
         onSwitchToLogin={() => setModal('login')}
+        onVerifyEmail={handleVerifyEmail}
+      />
+      <VerifyEmailModal
+        open={modal === 'verify'}
+        onClose={handleClose}
+        email={verifyEmail}
       />
     </div>
   );

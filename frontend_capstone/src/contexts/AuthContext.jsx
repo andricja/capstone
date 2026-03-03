@@ -31,9 +31,8 @@ export function AuthProvider({ children }) {
 
   const register = async (name, email, password, password_confirmation, role) => {
     const res = await api.post('/register', { name, email, password, password_confirmation, role });
-    localStorage.setItem('token', res.data.token);
-    setUser(res.data.user);
-    return res.data.user;
+    // New flow: no auto-login. Returns { requires_verification, email }
+    return res.data;
   };
 
   const logout = async () => {

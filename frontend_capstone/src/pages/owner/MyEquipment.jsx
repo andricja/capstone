@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
+import { CardGridSkeleton } from '../../components/Skeleton';
 import Pagination from '../../components/Pagination';
 import ReceiptModal from '../../components/ReceiptModal';
 import { Plus, Pencil, Trash2, Settings, CheckCircle, Eye } from 'lucide-react';
@@ -119,7 +120,7 @@ export default function MyEquipment() {
       )}
 
       {loading ? (
-        <div className="text-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto" /></div>
+        <CardGridSkeleton count={4} />
       ) : equipment?.data?.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           <p>You haven&apos;t listed any equipment yet.</p>

@@ -27,6 +27,10 @@ class User extends Authenticatable
         'password',
         'role',
         'archived_at',
+        'account_status',
+        'email_verification_code',
+        'email_code_expires_at',
+        'admin_rejection_reason',
     ];
 
     /**
@@ -53,6 +57,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'archived_at' => 'datetime',
+            'email_code_expires_at' => 'datetime',
         ];
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\Api\EquipmentController;
 use App\Http\Controllers\Api\GcashSettingController;
 use App\Http\Controllers\Api\MessageRequestController;
 use App\Http\Controllers\Api\RentalRequestController;
+use App\Http\Controllers\Api\SmtpSettingController;
 use Illuminate\Support\Facades\Route;
 
 /* ====================================================================== */
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
+Route::post('/resend-verification', [AuthController::class, 'resendVerificationCode']);
 
 /* ====================================================================== */
 /*  AUTHENTICATED (any role)                                               */
@@ -105,5 +109,16 @@ Route::middleware('auth:sanctum')->group(function () {
         // Revenue reports
         Route::get('/reports/revenue',    [AdminReportController::class, 'revenue']);
         Route::get('/reports/revenue/csv',[AdminReportController::class, 'exportCsv']);
+
+        // Account management (approve / reject registrations)
+        Route::get('/accounts',              [AccountController::class, 'index']);
+        Route::get('/accounts/stats',        [AccountController::class, 'stats']);
+        Route::patch('/accounts/{id}/approve', [AccountController::class, 'approve']);
+        Route::patch('/accounts/{id}/reject',  [AccountController::class, 'reject']);
+
+        // SMTP settings
+        Route::get('/smtp-settings',       [SmtpSettingController::class, 'show']);
+        Route::post('/smtp-settings',      [SmtpSettingController::class, 'store']);
+        Route::post('/smtp-settings/test', [SmtpSettingController::class, 'test']);
     });
 });
