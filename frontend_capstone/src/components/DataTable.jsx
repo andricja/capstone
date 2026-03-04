@@ -105,7 +105,7 @@ export default function DataTable({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 overflow-hidden transition-colors">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 overflow-hidden transition-colors">
       {/* Toolbar: entries-per-page & search */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-3 border-b dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">

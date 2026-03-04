@@ -63,7 +63,7 @@ export function ToastProvider({ children }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`pointer-events-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-l-4 ${BG[t.type]} rounded-lg shadow-lg px-4 py-3 flex items-start gap-3 animate-slide-in`}
+            className={`pointer-events-auto bg-white dark:bg-gray-800 border border-green-200 dark:border-green-700 border-l-4 ${BG[t.type]} rounded-lg shadow-lg px-4 py-3 flex items-start gap-3 animate-slide-in`}
           >
             <span className="mt-0.5 shrink-0">{ICONS[t.type]}</span>
             <p className="text-sm text-gray-800 dark:text-gray-200 flex-1">{t.message}</p>

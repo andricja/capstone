@@ -246,6 +246,7 @@ class AuthController extends Controller
     public function owners(Request $request): JsonResponse
     {
         $owners = User::where('role', 'owner')
+            ->whereNull('archived_at')
             ->withCount(['equipment', 'equipment as approved_equipment_count' => function ($q) {
                 $q->where('status', '!=', 'rejected');
             }])
@@ -291,11 +292,12 @@ class AuthController extends Controller
      */
     public function ownerStats(): JsonResponse
     {
-        $totalOwners  = User::where('role', 'owner')->count();
+        $totalOwners  = User::where('role', 'owner')->whereNull('archived_at')->count();
         $totalRenters = User::where('role', 'renter')->count();
-        $totalEquipment = Equipment::count();
-        $activeRentals  = RentalRequest::where('status', 'approved')->count();
+        $totalEquipment = Equipment::whereNull('archived_at')->count();
+        $activeRentals  = RentalRequest::where('status', 'approved')->whereNull('archived_at')->count();
         $newOwnersThisMonth = User::where('role', 'owner')
+            ->whereNull('archived_at')
             ->where('created_at', '>=', now()->startOfMonth())
             ->count();
 

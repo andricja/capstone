@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
@@ -166,7 +167,7 @@ export default function BrowseEquipment() {
       </div>
 
       {/* Filters */}
-      <form onSubmit={handleFilter} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4 mb-6 flex flex-wrap gap-3 items-end transition-colors">
+      <form onSubmit={handleFilter} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-4 mb-6 flex flex-wrap gap-3 items-end transition-colors">
         <div className="flex-1 min-w-[180px]">
           <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><MapPin className="inline mr-1 w-3 h-3" />Municipality</label>
           <select value={filters.location} onChange={(e) => setFilters({ ...filters, location: e.target.value })}
@@ -195,7 +196,7 @@ export default function BrowseEquipment() {
         /* ══════════ CARD VIEW ══════════ */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {allEquipment.map((eq) => (
-            <div key={eq.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 overflow-hidden transition-colors">
+            <div key={eq.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 overflow-hidden transition-colors">
               {eq.image ? (
                 <img src={`/storage/${eq.image}`} alt={eq.name} className="w-full h-48 object-cover" />
               ) : (
@@ -229,7 +230,7 @@ export default function BrowseEquipment() {
         </div>
       ) : (
         /* ══════════ TABLE VIEW ══════════ */
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
           {/* Toolbar */}
           <div className="p-4 border-b dark:border-gray-700 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm">
@@ -332,7 +333,7 @@ export default function BrowseEquipment() {
       )}
 
       {/* Rental modal — farm-size based */}
-      {selected && (
+      {selected && createPortal(
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setSelected(null)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Request Rental</h2>
@@ -537,7 +538,8 @@ export default function BrowseEquipment() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

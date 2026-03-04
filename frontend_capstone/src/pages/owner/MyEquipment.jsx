@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { CardGridSkeleton } from '../../components/Skeleton';
@@ -6,6 +7,7 @@ import Pagination from '../../components/Pagination';
 import ReceiptModal from '../../components/ReceiptModal';
 import { Plus, Pencil, Trash2, Settings, CheckCircle, Eye, Archive } from 'lucide-react';
 import { useToast } from '../../components/Toast';
+import Tooltip from '../../components/Tooltip';
 
 const CATEGORIES = ['tractor', 'harvester', 'planter', 'irrigation', 'cultivator', 'sprayer', 'trailer', 'other'];
 const MUNICIPALITIES = [
@@ -134,7 +136,7 @@ export default function MyEquipment() {
       ) : (
         <div className="space-y-4">
           {equipment.data.map((eq) => (
-            <div key={eq.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+            <div key={eq.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {eq.image ? (
@@ -148,40 +150,52 @@ export default function MyEquipment() {
                     <p className="text-sm font-medium text-green-700">₱{parseFloat(eq.daily_rate).toLocaleString()}/day</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <StatusBadge status={eq.status} />
 
                   {eq.status === 'available' && (
-                    <button onClick={() => toggleStatus(eq.id, 'set-maintenance')}
-                      className="text-amber-600 hover:bg-amber-50 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-amber-200">
-                      <Settings /> Set Maintenance
-                    </button>
+                    <Tooltip text="Set Maintenance">
+                      <button onClick={() => toggleStatus(eq.id, 'set-maintenance')}
+                        className="p-1.5 text-amber-600 hover:bg-amber-50 rounded border border-amber-200">
+                        <Settings className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   )}
                   {(eq.status === 'rented' || eq.status === 'maintenance') && (
-                    <button onClick={() => toggleStatus(eq.id, 'set-available')}
-                      className="text-green-600 hover:bg-green-50 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-green-200">
-                      <CheckCircle /> Set Available
-                    </button>
+                    <Tooltip text="Set Available">
+                      <button onClick={() => toggleStatus(eq.id, 'set-available')}
+                        className="p-1.5 text-green-600 hover:bg-green-50 rounded border border-green-200">
+                        <CheckCircle className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   )}
                   {eq.approval_fee != null && eq.approved_at && (
-                    <button onClick={() => setReceiptItem(eq)}
-                      className="text-blue-600 hover:bg-blue-50 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-blue-200">
-                      <Eye /> View Receipt
-                    </button>
+                    <Tooltip text="View Receipt">
+                      <button onClick={() => setReceiptItem(eq)}
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded border border-blue-200">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   )}
                   {(eq.status === 'pending' || eq.status === 'rejected') && (
                     <>
-                      <button onClick={() => openEdit(eq)} className="text-blue-600 hover:bg-blue-50 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-blue-200">
-                        <Pencil /> Edit
-                      </button>
-                      <button onClick={() => handleDelete(eq.id)} className="text-red-600 hover:bg-red-50 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-red-200">
-                        <Trash2 /> Delete
-                      </button>
+                      <Tooltip text="Edit">
+                        <button onClick={() => openEdit(eq)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded border border-blue-200">
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </Tooltip>
+                      <Tooltip text="Delete">
+                        <button onClick={() => handleDelete(eq.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded border border-red-200">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </Tooltip>
                     </>
                   )}
-                  <button onClick={() => handleArchive(eq.id)} className="text-amber-600 hover:bg-amber-50 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-amber-200">
-                    <Archive className="w-3.5 h-3.5" /> Archive
-                  </button>
+                  <Tooltip text="Archive">
+                    <button onClick={() => handleArchive(eq.id)} className="p-1.5 text-amber-600 hover:bg-amber-50 rounded border border-amber-200">
+                      <Archive className="w-4 h-4" />
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
             </div>
@@ -191,7 +205,7 @@ export default function MyEquipment() {
       )}
 
       {/* Add/Edit Modal */}
-      {showModal && (
+      {showModal && createPortal(
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
           <div className="bg-white dark:bg-gray-800 dark:text-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{editing ? 'Edit Equipment' : 'Add Equipment'}</h2>
@@ -249,7 +263,8 @@ export default function MyEquipment() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Receipt Modal */}

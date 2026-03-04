@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import { Tractor, X, MailCheck } from 'lucide-react';
 
@@ -79,7 +80,7 @@ export default function VerifyEmailModal({ open, onClose, email }) {
     }
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4" onClick={onClose}>
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md relative animate-in" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -145,6 +146,7 @@ export default function VerifyEmailModal({ open, onClose, email }) {
           </button>
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

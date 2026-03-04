@@ -5,6 +5,7 @@ import { TableSkeleton } from '../../components/Skeleton';
 import Pagination from '../../components/Pagination';
 import { Archive } from 'lucide-react';
 import { useToast } from '../../components/Toast';
+import Tooltip from '../../components/Tooltip';
 
 export default function RenterMessages() {
   const [messages, setMessages] = useState(null);
@@ -64,7 +65,7 @@ export default function RenterMessages() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-6 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Send an Inquiry</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -95,7 +96,7 @@ export default function RenterMessages() {
         </div>
 
         {/* History */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
           <div className="px-6 py-4 border-b dark:border-gray-700">
             <h2 className="font-semibold text-gray-900 dark:text-white">My Inquiries</h2>
           </div>
@@ -111,12 +112,14 @@ export default function RenterMessages() {
                     <span className="text-xs text-gray-400 dark:text-gray-500">{new Date(m.created_at).toLocaleDateString()}</span>
                     <div className="flex items-center gap-2">
                       <StatusBadge status={m.status} />
-                      <button
-                        onClick={() => handleArchive(m.id)}
-                        className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-amber-600 bg-amber-50 rounded hover:bg-amber-100 transition-colors"
-                      >
-                        <Archive className="w-3 h-3" /> Archive
-                      </button>
+                      <Tooltip text="Archive">
+                        <button
+                          onClick={() => handleArchive(m.id)}
+                          className="p-1.5 text-amber-600 bg-amber-50 rounded hover:bg-amber-100 transition-colors"
+                        >
+                          <Archive className="w-3.5 h-3.5" />
+                        </button>
+                      </Tooltip>
                     </div>
                   </div>
                   <p className="text-sm text-gray-800 dark:text-gray-200">{m.message}</p>

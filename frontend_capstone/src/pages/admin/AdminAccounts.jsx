@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import DataTable from '../../components/DataTable';
 import { TableSkeleton } from '../../components/Skeleton';
@@ -182,7 +183,7 @@ export default function AdminAccounts() {
       {/* Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {statCards.map((card) => (
-          <div key={card.label} className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${card.border} p-4 flex items-center gap-3 transition-colors`}>
+          <div key={card.label} className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${card.border} p-4 flex items-center gap-3 transition-colors`}>
             <div className={`${card.color} p-2.5 rounded-lg ring-1`}>
               {card.icon}
             </div>
@@ -233,7 +234,7 @@ export default function AdminAccounts() {
       )}
 
       {/* ── Detail Modal ── */}
-      {selected && (
+      {selected && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelected(null)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
@@ -301,11 +302,12 @@ export default function AdminAccounts() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ── Reject Reason Modal ── */}
-      {rejectModal && (
+      {rejectModal && createPortal(
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setRejectModal(null)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
@@ -346,7 +348,8 @@ export default function AdminAccounts() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

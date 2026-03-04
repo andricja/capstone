@@ -105,7 +105,7 @@ export default function AdminSmtpSettings() {
       )}
 
       {/* Form */}
-      <form onSubmit={handleSave} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 space-y-5 transition-colors">
+      <form onSubmit={handleSave} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-6 space-y-5 transition-colors">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">SMTP Host</label>
@@ -225,7 +225,7 @@ export default function AdminSmtpSettings() {
       </form>
 
       {/* Test Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 mt-6 transition-colors">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-6 mt-6 transition-colors">
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
           <Send className="w-4 h-4 text-green-600" />
           Test Email Configuration

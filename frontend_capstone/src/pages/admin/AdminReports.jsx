@@ -121,7 +121,7 @@ export default function AdminReports() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4 mb-6 flex flex-wrap items-end gap-3 transition-colors">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-4 mb-6 flex flex-wrap items-end gap-3 transition-colors">
         <div>
           <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Time Period</label>
           <select value={filter} onChange={(e) => setFilter(e.target.value)}
@@ -153,7 +153,7 @@ export default function AdminReports() {
       {/* Summary */}
       {data?.summary && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 border-l-green-500 p-5 flex items-center gap-4 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-green-500 p-5 flex items-center gap-4 transition-colors">
             <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
               <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
@@ -162,7 +162,7 @@ export default function AdminReports() {
               <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 border-l-blue-500 p-5 flex items-center gap-4 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-blue-500 p-5 flex items-center gap-4 transition-colors">
             <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
               <Tractor className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
@@ -171,7 +171,7 @@ export default function AdminReports() {
               <p className="text-sm text-gray-500 dark:text-gray-400">Equipment Approved</p>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 border-l-amber-500 p-5 flex items-center gap-4 transition-colors">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-amber-500 p-5 flex items-center gap-4 transition-colors">
             <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
               <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
             </div>

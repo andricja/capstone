@@ -14,7 +14,7 @@ export function StatCardSkeleton({ count = 6 }) {
   return (
     <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-${count} gap-4 mb-8`}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 space-y-3">
+        <div key={i} className="bg-white rounded-xl shadow-md border border-green-200 p-5 space-y-3">
           <Bar className="h-4 w-20" />
           <Bar className="h-8 w-16" />
           <Bar className="h-3 w-24" />
@@ -27,7 +27,7 @@ export function StatCardSkeleton({ count = 6 }) {
 /* ─── Chart skeleton ─── */
 export function ChartSkeleton() {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
+    <div className="bg-white rounded-xl shadow-md border border-green-200 p-5 space-y-4">
       <Bar className="h-5 w-40" />
       <div className="flex items-end gap-3 h-52">
         {[40, 65, 50, 80, 55, 70, 45, 75, 60, 85, 50, 90].map((h, i) => (
@@ -48,7 +48,7 @@ export function ChartSkeleton() {
 /* ─── Table row skeleton ─── */
 export function TableSkeleton({ rows = 8, cols = 5 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-md border border-green-200 overflow-hidden">
       {/* Header */}
       <div className="border-b border-gray-100 px-5 py-3 flex gap-4">
         {Array.from({ length: cols }).map((_, i) => (
@@ -72,7 +72,7 @@ export function CardGridSkeleton({ count = 8 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div key={i} className="bg-white rounded-xl shadow-md border border-green-200 overflow-hidden">
           <Bar className="h-40 w-full rounded-none" />
           <div className="p-4 space-y-3">
             <Bar className="h-5 w-3/4" />
@@ -91,7 +91,7 @@ export function CardGridSkeleton({ count = 8 }) {
 /* ─── Form skeleton ─── */
 export function FormSkeleton({ fields = 5 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-6 max-w-2xl">
+    <div className="bg-white rounded-xl shadow-md border border-green-200 p-6 space-y-6 max-w-2xl">
       <Bar className="h-6 w-48" />
       {Array.from({ length: fields }).map((_, i) => (
         <div key={i} className="space-y-2">

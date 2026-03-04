@@ -286,7 +286,7 @@ export default function AccountSettings() {
 
       {/* Profile Tab */}
       {activeTab === 'profile' && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
           <div className="flex items-center gap-2 px-6 py-4 border-b dark:border-gray-700">
             <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Information</h2>
@@ -334,7 +334,7 @@ export default function AccountSettings() {
 
       {/* Password Tab */}
       {activeTab === 'password' && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
           <div className="flex items-center gap-2 px-6 py-4 border-b dark:border-gray-700">
             <Lock className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Change Password</h2>
@@ -424,7 +424,7 @@ export default function AccountSettings() {
                 <p>These details will be shown to renters when they pay via GCash. Payments go directly to your GCash account.</p>
               </div>
 
-              <form onSubmit={handleGcashSave} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 space-y-5 transition-colors">
+              <form onSubmit={handleGcashSave} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-6 space-y-5 transition-colors">
                 <div className="flex items-center gap-2 mb-2">
                   <Wallet className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">GCash Payment Details</h2>
@@ -588,7 +588,7 @@ export default function AccountSettings() {
               )}
 
               {/* SMTP Form */}
-              <form onSubmit={handleSmtpSave} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 space-y-5 transition-colors">
+              <form onSubmit={handleSmtpSave} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-6 space-y-5 transition-colors">
                 <div className="flex items-center gap-2 mb-2">
                   <Server className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">SMTP Configuration</h2>
@@ -714,7 +714,7 @@ export default function AccountSettings() {
               </form>
 
               {/* Test Email */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 transition-colors">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-6 transition-colors">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
                   <Send className="w-4 h-4 text-green-600" />
                   Test Email Configuration
@@ -755,7 +755,7 @@ export default function AccountSettings() {
 function ArchiveSection({ title, empty, children }) {
   const items = Array.isArray(children) ? children.filter(Boolean) : children ? [children] : [];
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors overflow-hidden">
       <div className="px-6 py-4 border-b dark:border-gray-700 flex items-center gap-2">
         <Archive className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>

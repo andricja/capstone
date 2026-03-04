@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { TableSkeleton } from '../../components/Skeleton';
@@ -6,6 +7,7 @@ import DataTable from '../../components/DataTable';
 import ReceiptModal from '../../components/ReceiptModal';
 import { Check, X, ListFilter, Clock, CheckCircle, LayoutList, DollarSign, Receipt, Eye, Archive } from 'lucide-react';
 import { useToast } from '../../components/Toast';
+import Tooltip from '../../components/Tooltip';
 
 const FILTERS = [
   { key: 'all',      label: 'All',      icon: <LayoutList className="w-4 h-4" /> },
@@ -163,41 +165,51 @@ export default function AdminEquipment() {
       render: (row) =>
         row.status === 'pending' ? (
           <div className="flex items-center justify-center gap-1.5">
-            <button
-              onClick={(e) => openApproveModal(row, e)}
-              className="inline-flex items-center gap-1 bg-green-50 text-green-700 hover:bg-green-100 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
-            >
-              <Check className="w-3.5 h-3.5" /> Approve
-            </button>
-            <button
-              onClick={(e) => handleReject(row.id, e)}
-              className="inline-flex items-center gap-1 bg-red-50 text-red-700 hover:bg-red-100 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
-            >
-              <X className="w-3.5 h-3.5" /> Reject
-            </button>
+            <Tooltip text="Approve">
+              <button
+                onClick={(e) => openApproveModal(row, e)}
+                className="p-1.5 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg transition-colors"
+              >
+                <Check className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
+            <Tooltip text="Reject">
+              <button
+                onClick={(e) => handleReject(row.id, e)}
+                className="p-1.5 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
           </div>
         ) : row.approval_fee != null && row.approved_at ? (
           <div className="flex items-center justify-center gap-1.5">
-            <button
-              onClick={(e) => { e.stopPropagation(); setReceipt(row); }}
-              className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 hover:bg-blue-100 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
-            >
-              <Eye className="w-3.5 h-3.5" /> View Receipt
-            </button>
-            <button
-              onClick={(e) => handleArchive(row.id, e)}
-              className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 hover:bg-amber-100 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
-            >
-              <Archive className="w-3.5 h-3.5" /> Archive
-            </button>
+            <Tooltip text="View Receipt">
+              <button
+                onClick={(e) => { e.stopPropagation(); setReceipt(row); }}
+                className="p-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition-colors"
+              >
+                <Eye className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
+            <Tooltip text="Archive">
+              <button
+                onClick={(e) => handleArchive(row.id, e)}
+                className="p-1.5 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors"
+              >
+                <Archive className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
           </div>
         ) : (
-          <button
-            onClick={(e) => handleArchive(row.id, e)}
-            className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 hover:bg-amber-100 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
-          >
-            <Archive className="w-3.5 h-3.5" /> Archive
-          </button>
+          <Tooltip text="Archive">
+            <button
+              onClick={(e) => handleArchive(row.id, e)}
+              className="p-1.5 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors"
+            >
+              <Archive className="w-3.5 h-3.5" />
+            </button>
+          </Tooltip>
         ),
     },
   ];
@@ -243,7 +255,7 @@ export default function AdminEquipment() {
       )}
       
       {/* ── Approval Fee Modal ── */}
-      {approveItem && (
+      {approveItem && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setApproveItem(null)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
@@ -324,7 +336,8 @@ export default function AdminEquipment() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ── Receipt Modal (shared component) ── */}

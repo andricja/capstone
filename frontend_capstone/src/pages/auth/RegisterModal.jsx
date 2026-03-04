@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../lib/api';
 import { Tractor, X, MailCheck, ArrowLeft } from 'lucide-react';
@@ -135,7 +136,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
 
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4" onClick={onClose}>
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md relative max-h-[90vh] overflow-y-auto animate-in" onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
@@ -293,6 +294,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

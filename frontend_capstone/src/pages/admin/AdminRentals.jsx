@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { TableSkeleton } from '../../components/Skeleton';
 import DataTable from '../../components/DataTable';
 import { ClipboardList, CheckCircle, XCircle, LayoutList, X, User, Mail, Phone, MapPin, Calendar, Tractor, DollarSign, Truck, Archive } from 'lucide-react';
 import { useToast } from '../../components/Toast';
+import Tooltip from '../../components/Tooltip';
 
 const FILTERS = [
   { key: 'all',      label: 'All',      icon: <LayoutList className="w-4 h-4" /> },
@@ -99,10 +101,12 @@ export default function AdminRentals() {
       align: 'center',
       sortable: false,
       render: (row) => (
-        <button onClick={(e) => handleArchive(row.id, e)}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-amber-600 bg-amber-50 rounded hover:bg-amber-100 border border-amber-200">
-          <Archive className="w-3.5 h-3.5" /> Archive
-        </button>
+        <Tooltip text="Archive">
+          <button onClick={(e) => handleArchive(row.id, e)}
+            className="p-1.5 text-amber-600 bg-amber-50 rounded hover:bg-amber-100 border border-amber-200">
+            <Archive className="w-3.5 h-3.5" />
+          </button>
+        </Tooltip>
       ),
     },
   ];
@@ -149,7 +153,7 @@ export default function AdminRentals() {
       )}
 
       {/* ── Detail Modal ── */}
-      {selected && (
+      {selected && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelected(null)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
@@ -260,14 +264,17 @@ export default function AdminRentals() {
 
               {/* Archive */}
               <div className="pt-3 border-t dark:border-gray-700">
-                <button onClick={(e) => handleArchive(selected.id, e)}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200">
-                  <Archive className="w-4 h-4" /> Archive
-                </button>
+                <Tooltip text="Archive">
+                  <button onClick={(e) => handleArchive(selected.id, e)}
+                    className="p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200">
+                    <Archive className="w-4 h-4" />
+                  </button>
+                </Tooltip>
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,9 +1,11 @@
 import { useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { ListPageSkeleton } from '../../components/Skeleton';
 import { Check, X, Ruler, Clock, Calendar, Truck, MapPin, LayoutGrid, Table, Banknote, Archive } from 'lucide-react';
 import { useToast } from '../../components/Toast';
+import Tooltip from '../../components/Tooltip';
 
 export default function OwnerRentals() {
   const [allData, setAllData] = useState([]);
@@ -151,7 +153,7 @@ export default function OwnerRentals() {
         ) : (
         <div className="space-y-4">
           {processed.map((r) => (
-            <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+            <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -257,23 +259,29 @@ export default function OwnerRentals() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 {r.status === 'forwarded' && (
                   <>
-                    <button onClick={() => handleAction(r.id, 'approve')}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
-                      <Check className="w-4 h-4" /> Approve
-                    </button>
-                    <button onClick={() => handleAction(r.id, 'reject')}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 flex items-center gap-1">
-                      <X className="w-4 h-4" /> Reject
-                    </button>
+                    <Tooltip text="Approve">
+                      <button onClick={() => handleAction(r.id, 'approve')}
+                        className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <Check className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip text="Reject">
+                      <button onClick={() => handleAction(r.id, 'reject')}
+                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   </>
                 )}
-                <button onClick={(e) => handleArchive(r.id, e)}
-                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200">
-                  <Archive className="w-4 h-4" /> Archive
-                </button>
+                <Tooltip text="Archive">
+                  <button onClick={(e) => handleArchive(r.id, e)}
+                    className="p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 transition-colors">
+                    <Archive className="w-4 h-4" />
+                  </button>
+                </Tooltip>
               </div>
             </div>
           ))}
@@ -281,7 +289,7 @@ export default function OwnerRentals() {
         )
       ) : (
         /* ══════════ TABLE VIEW ══════════ */
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
           {/* Toolbar */}
           <div className="p-4 border-b dark:border-gray-700 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm">
@@ -349,20 +357,26 @@ export default function OwnerRentals() {
                       <div className="flex gap-1">
                         {r.status === 'forwarded' ? (
                           <>
-                            <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'approve'); }}
-                              className="bg-green-600 text-white px-2.5 py-1 rounded text-xs font-medium hover:bg-green-700 flex items-center gap-0.5">
-                              <Check className="w-3 h-3" /> Approve
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'reject'); }}
-                              className="bg-red-500 text-white px-2.5 py-1 rounded text-xs font-medium hover:bg-red-600 flex items-center gap-0.5">
-                              <X className="w-3 h-3" /> Reject
-                            </button>
+                            <Tooltip text="Approve">
+                              <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'approve'); }}
+                                className="p-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                                <Check className="w-3.5 h-3.5" />
+                              </button>
+                            </Tooltip>
+                            <Tooltip text="Reject">
+                              <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'reject'); }}
+                                className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </Tooltip>
                           </>
                         ) : null}
-                        <button onClick={(e) => handleArchive(r.id, e)}
-                          className="flex items-center gap-0.5 px-2.5 py-1 rounded text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100">
-                          <Archive className="w-3 h-3" /> Archive
-                        </button>
+                        <Tooltip text="Archive">
+                          <button onClick={(e) => handleArchive(r.id, e)}
+                            className="p-1.5 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded">
+                            <Archive className="w-3.5 h-3.5" />
+                          </button>
+                        </Tooltip>
                       </div>
                     </td>
                   </tr>
@@ -391,7 +405,7 @@ export default function OwnerRentals() {
       )}
 
       {/* Payment proof image modal */}
-      {proofImage && (
+      {proofImage && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setProofImage(null)}>
           <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setProofImage(null)}
@@ -403,11 +417,12 @@ export default function OwnerRentals() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Row detail modal */}
-      {selectedRow && (
+      {selectedRow && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedRow(null)}>
           <div className="relative max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setSelectedRow(null)}
@@ -518,27 +533,34 @@ export default function OwnerRentals() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 {selectedRow.status === 'forwarded' && (
                   <>
-                    <button onClick={() => { handleAction(selectedRow.id, 'approve'); setSelectedRow(null); }}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
-                      <Check className="w-4 h-4" /> Approve
-                    </button>
-                    <button onClick={() => { handleAction(selectedRow.id, 'reject'); setSelectedRow(null); }}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 flex items-center gap-1">
-                      <X className="w-4 h-4" /> Reject
-                    </button>
+                    <Tooltip text="Approve">
+                      <button onClick={() => { handleAction(selectedRow.id, 'approve'); setSelectedRow(null); }}
+                        className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <Check className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip text="Reject">
+                      <button onClick={() => { handleAction(selectedRow.id, 'reject'); setSelectedRow(null); }}
+                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   </>
                 )}
-                <button onClick={(e) => { handleArchive(selectedRow.id, e); setSelectedRow(null); }}
-                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200">
-                  <Archive className="w-4 h-4" /> Archive
-                </button>
+                <Tooltip text="Archive">
+                  <button onClick={(e) => { handleArchive(selectedRow.id, e); setSelectedRow(null); }}
+                    className="p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 transition-colors">
+                    <Archive className="w-4 h-4" />
+                  </button>
+                </Tooltip>
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Receipt, CheckCircle, Printer, X } from 'lucide-react';
 
 /**
@@ -38,7 +39,7 @@ export default function ReceiptModal({ equipment, onClose }) {
     win.print();
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
@@ -122,6 +123,7 @@ export default function ReceiptModal({ equipment, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

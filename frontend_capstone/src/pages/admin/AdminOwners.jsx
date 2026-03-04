@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import DataTable from '../../components/DataTable';
 import { ListPageSkeleton } from '../../components/Skeleton';
 import { Users, UserPlus, Tractor, Mail, Calendar, LayoutGrid, Table, ClipboardList, Plus, X, MapPin, DollarSign, Eye, Truck, Tag, FileText, Clock, Archive } from 'lucide-react';
+import Tooltip from '../../components/Tooltip';
+import { useToast } from '../../components/Toast';
 
 const CATEGORIES = ['tractor','harvester','planter','irrigation','cultivator','sprayer','trailer','other'];
 
@@ -11,6 +14,7 @@ const initialForm = {
 };
 
 export default function AdminOwners() {
+  const toast = useToast();
   const [data, setData] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -69,15 +73,17 @@ export default function AdminOwners() {
 
   const handleArchive = async (id, e) => {
     e?.stopPropagation();
+    if (!confirm('Archive this owner? They will be moved to the Archive in Account Settings.')) return;
     try {
       await api.patch(`/admin/owners/${id}/archive`);
+      toast.success('Owner archived successfully.');
       fetchOwners();
       fetchStats();
       if (detailOwner?.owner?.id === id) {
-        setDetailOwner((prev) => prev ? { ...prev, owner: { ...prev.owner, archived_at: prev.owner.archived_at ? null : new Date().toISOString() } } : prev);
+        setDetailOwner(null);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to archive.');
+      toast.error(err.response?.data?.message || 'Failed to archive.');
     }
   };
 
@@ -166,7 +172,7 @@ export default function AdminOwners() {
         {statCards.map((card) => {
           const c = colorMap[card.color];
           return (
-            <div key={card.label} className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${c.border} p-4 flex items-center gap-3 transition-colors`}>
+            <div key={card.label} className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${c.border} p-4 flex items-center gap-3 transition-colors`}>
               <div className={`${c.bg} ${c.text} p-2.5 rounded-lg ring-1 ${c.ring}`}>
                 {card.icon}
               </div>
@@ -188,7 +194,7 @@ export default function AdminOwners() {
             <div
               key={owner.id}
               onClick={() => openDetail(owner)}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 hover:shadow-md transition-all cursor-pointer"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 hover:shadow-lg transition-all cursor-pointer"
             >
               {/* Avatar + Name */}
               <div className="flex items-center gap-3 mb-4">
@@ -224,25 +230,27 @@ export default function AdminOwners() {
                   <Calendar className="w-3.5 h-3.5" />
                   Joined {new Date(owner.created_at).toLocaleDateString()}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => handleArchive(owner.id, e)}
-                    className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg transition-colors ${
-                      owner.archived_at
-                        ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/30'
-                        : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    <Archive className="w-3.5 h-3.5" />
-                    {owner.archived_at ? 'Unarchive' : 'Archive'}
-                  </button>
-                  <button
-                    onClick={(e) => openModal(owner, e)}
-                    className="flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg transition-colors"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Add Equipment
-                  </button>
+                <div className="flex items-center gap-1.5">
+                  <Tooltip text={owner.archived_at ? 'Unarchive' : 'Archive'}>
+                    <button
+                      onClick={(e) => handleArchive(owner.id, e)}
+                      className={`p-1.5 rounded-lg transition-colors ${
+                        owner.archived_at
+                          ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/30'
+                          : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      <Archive className="w-3.5 h-3.5" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip text="Add Equipment">
+                    <button
+                      onClick={(e) => openModal(owner, e)}
+                      className="p-1.5 text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
             </div>
@@ -306,24 +314,26 @@ export default function AdminOwners() {
               sortable: false,
               render: (row) => (
                 <div className="flex items-center justify-center gap-1.5">
-                  <button
-                    onClick={(e) => handleArchive(row.id, e)}
-                    className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg transition-colors ${
-                      row.archived_at
-                        ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/30'
-                        : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    <Archive className="w-3.5 h-3.5" />
-                    {row.archived_at ? 'Unarchive' : 'Archive'}
-                  </button>
-                  <button
-                    onClick={(e) => openModal(row, e)}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg transition-colors"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Add Equipment
-                  </button>
+                  <Tooltip text={row.archived_at ? 'Unarchive' : 'Archive'}>
+                    <button
+                      onClick={(e) => handleArchive(row.id, e)}
+                      className={`p-1.5 rounded-lg transition-colors ${
+                        row.archived_at
+                          ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/30'
+                          : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      <Archive className="w-3.5 h-3.5" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip text="Add Equipment">
+                    <button
+                      onClick={(e) => openModal(row, e)}
+                      className="p-1.5 text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </Tooltip>
                 </div>
               ),
             },
@@ -337,7 +347,7 @@ export default function AdminOwners() {
       )}
 
       {/* ── Add Equipment Modal ── */}
-      {modalOwner && (
+      {modalOwner && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             {/* Modal header */}
@@ -425,11 +435,12 @@ export default function AdminOwners() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ── Owner Detail Modal ── */}
-      {(detailOwner || detailLoading) && (
+      {(detailOwner || detailLoading) && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={closeDetail}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {detailLoading ? (
@@ -487,17 +498,18 @@ export default function AdminOwners() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <button
-                      onClick={(e) => handleArchive(detailOwner.owner.id, e)}
-                      className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
-                        detailOwner.owner.archived_at
-                          ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 border border-amber-200 dark:border-amber-800'
-                          : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
-                      }`}
-                    >
-                      <Archive className="w-3.5 h-3.5" />
-                      {detailOwner.owner.archived_at ? 'Unarchive Owner' : 'Archive Owner'}
-                    </button>
+                    <Tooltip text={detailOwner.owner.archived_at ? 'Unarchive Owner' : 'Archive Owner'}>
+                      <button
+                        onClick={(e) => handleArchive(detailOwner.owner.id, e)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          detailOwner.owner.archived_at
+                            ? 'text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 border border-amber-200 dark:border-amber-800'
+                            : 'text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
+                        }`}
+                      >
+                        <Archive className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   </div>
                 </div>
 
@@ -563,7 +575,8 @@ export default function AdminOwners() {
               </>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

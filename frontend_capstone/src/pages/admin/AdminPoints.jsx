@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { TableSkeleton } from '../../components/Skeleton';
@@ -54,7 +55,7 @@ export default function AdminPoints() {
       ) : data?.data?.length === 0 ? (
         <div className="text-center py-12 text-gray-500">No points requests found.</div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-green-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
@@ -106,14 +107,15 @@ export default function AdminPoints() {
       )}
 
       {/* Image preview modal */}
-      {previewImg && (
+      {previewImg && createPortal(
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setPreviewImg(null)}>
           <div className="bg-white rounded-2xl p-4 max-w-lg w-full">
             <h3 className="font-semibold text-gray-900 mb-3">Payment Proof</h3>
             <img src={previewImg} alt="Payment proof" className="w-full rounded-lg" />
             <button onClick={() => setPreviewImg(null)} className="mt-3 w-full py-2 bg-gray-100 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-200">Close</button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

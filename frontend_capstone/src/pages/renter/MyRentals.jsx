@@ -1,10 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { ListPageSkeleton } from '../../components/Skeleton';
 import RentalReceiptModal from '../../components/RentalReceiptModal';
 import { Eye, LayoutGrid, Table, Banknote, Archive } from 'lucide-react';
 import { useToast } from '../../components/Toast';
+import Tooltip from '../../components/Tooltip';
 
 export default function MyRentals() {
   const [allData, setAllData] = useState([]);
@@ -134,7 +136,7 @@ export default function MyRentals() {
         ) : (
         <div className="space-y-4">
           {processed.map((r) => (
-            <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+            <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">{r.equipment?.name}</h3>
@@ -174,19 +176,23 @@ export default function MyRentals() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">Delivery: {r.delivery_address}</p>
                   {r.equipment?.owner && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Owner: {r.equipment.owner.name} ({r.equipment.owner.email})</p>}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setReceiptItem(r)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-                  >
-                    <Eye className="w-4 h-4" /> View Receipt
-                  </button>
-                  <button
-                    onClick={() => handleArchive(r.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors"
-                  >
-                    <Archive className="w-4 h-4" /> Archive
-                  </button>
+                <div className="flex items-center gap-1.5">
+                  <Tooltip text="View Receipt">
+                    <button
+                      onClick={() => setReceiptItem(r)}
+                      className="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip text="Archive">
+                    <button
+                      onClick={() => handleArchive(r.id)}
+                      className="p-2 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors"
+                    >
+                      <Archive className="w-4 h-4" />
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
             </div>
@@ -195,7 +201,7 @@ export default function MyRentals() {
         )
       ) : (
         /* ══════════ TABLE VIEW ══════════ */
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
           {/* Toolbar */}
           <div className="p-4 border-b dark:border-gray-700 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm">
@@ -256,14 +262,18 @@ export default function MyRentals() {
                     <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
-                        <button onClick={() => setReceiptItem(r)}
-                          className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100">
-                          <Eye className="w-3 h-3" /> Receipt
-                        </button>
-                        <button onClick={() => handleArchive(r.id)}
-                          className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-amber-600 bg-amber-50 rounded hover:bg-amber-100">
-                          <Archive className="w-3 h-3" /> Archive
-                        </button>
+                        <Tooltip text="View Receipt">
+                          <button onClick={() => setReceiptItem(r)}
+                            className="p-1.5 text-blue-600 bg-blue-50 rounded hover:bg-blue-100">
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                        </Tooltip>
+                        <Tooltip text="Archive">
+                          <button onClick={() => handleArchive(r.id)}
+                            className="p-1.5 text-amber-600 bg-amber-50 rounded hover:bg-amber-100">
+                            <Archive className="w-3.5 h-3.5" />
+                          </button>
+                        </Tooltip>
                       </div>
                     </td>
                   </tr>
@@ -295,7 +305,7 @@ export default function MyRentals() {
       {receiptItem && <RentalReceiptModal rental={receiptItem} onClose={() => setReceiptItem(null)} />}
 
       {/* Payment proof image modal */}
-      {proofImage && (
+      {proofImage && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setProofImage(null)}>
           <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setProofImage(null)}
@@ -307,7 +317,8 @@ export default function MyRentals() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

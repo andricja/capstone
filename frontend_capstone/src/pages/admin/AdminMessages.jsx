@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../../lib/api';
 import StatusBadge from '../../components/StatusBadge';
 import { TableSkeleton } from '../../components/Skeleton';
 import DataTable from '../../components/DataTable';
-import { Trash2, MessageSquare, Eye, X, Archive } from 'lucide-react';
+import { Trash2, MessageSquare, Eye, X, Archive, CheckCircle } from 'lucide-react';
 import { useToast } from '../../components/Toast';
+import Tooltip from '../../components/Tooltip';
 
 export default function AdminMessages() {
   const [data, setData] = useState([]);
@@ -105,27 +107,41 @@ export default function AdminMessages() {
       align: 'center',
       sortable: false,
       render: (row) => (
-        <div className="flex items-center justify-center gap-1.5">
-          {row.status === 'pending' && (
-            <button onClick={(e) => updateStatus(row.id, 'reviewed', e)}
-              className="text-purple-600 hover:bg-purple-50 px-2 py-1 rounded text-xs font-medium border border-purple-200">
-              Reviewed
-            </button>
-          )}
-          {row.status === 'reviewed' && (
-            <button onClick={(e) => updateStatus(row.id, 'responded', e)}
-              className="text-green-600 hover:bg-green-50 px-2 py-1 rounded text-xs font-medium border border-green-200">
-              Responded
-            </button>
-          )}
-          <button onClick={(e) => handleDelete(row.id, e)}
-            className="text-red-500 hover:bg-red-50 p-1 rounded border border-red-200">
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-          <button onClick={(e) => handleArchive(row.id, e)}
-            className="text-amber-600 hover:bg-amber-50 p-1 rounded border border-amber-200">
-            <Archive className="w-3.5 h-3.5" />
-          </button>
+        <div className="inline-grid grid-cols-3 gap-1.5 mx-auto">
+          <div className="flex items-center justify-center">
+            {row.status === 'pending' && (
+              <Tooltip text="Mark Reviewed">
+                <button onClick={(e) => updateStatus(row.id, 'reviewed', e)}
+                  className="p-1.5 text-purple-600 hover:bg-purple-50 rounded border border-purple-200">
+                  <Eye className="w-3.5 h-3.5" />
+                </button>
+              </Tooltip>
+            )}
+            {row.status === 'reviewed' && (
+              <Tooltip text="Mark Responded">
+                <button onClick={(e) => updateStatus(row.id, 'responded', e)}
+                  className="p-1.5 text-green-600 hover:bg-green-50 rounded border border-green-200">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                </button>
+              </Tooltip>
+            )}
+          </div>
+          <div className="flex items-center justify-center">
+            <Tooltip text="Delete">
+              <button onClick={(e) => handleDelete(row.id, e)}
+                className="text-red-500 hover:bg-red-50 p-1.5 rounded border border-red-200">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
+          </div>
+          <div className="flex items-center justify-center">
+            <Tooltip text="Archive">
+              <button onClick={(e) => handleArchive(row.id, e)}
+                className="text-amber-600 hover:bg-amber-50 p-1.5 rounded border border-amber-200">
+                <Archive className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
+          </div>
         </div>
       ),
     },
@@ -173,7 +189,7 @@ export default function AdminMessages() {
       )}
 
       {/* ── Detail Modal ── */}
-      {selected && (
+      {selected && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setSelected(null)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
@@ -198,31 +214,42 @@ export default function AdminMessages() {
                 <p className="text-xs font-semibold uppercase text-gray-400 mb-1">Message</p>
                 <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg p-3 whitespace-pre-wrap">{selected.message}</p>
               </div>
-              <div className="flex items-center gap-2 flex-wrap pt-2 border-t dark:border-gray-700">
+              <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t dark:border-gray-700">
                 {selected.status === 'pending' && (
-                  <button onClick={(e) => { updateStatus(selected.id, 'reviewed', e); setSelected((s) => ({ ...s, status: 'reviewed' })); }}
-                    className="text-purple-600 hover:bg-purple-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-purple-200">
-                    Mark Reviewed
-                  </button>
+                  <Tooltip text="Mark Reviewed">
+                    <button onClick={(e) => { updateStatus(selected.id, 'reviewed', e); setSelected((s) => ({ ...s, status: 'reviewed' })); }}
+                      className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg border border-purple-200">
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </Tooltip>
                 )}
                 {selected.status === 'reviewed' && (
-                  <button onClick={(e) => { updateStatus(selected.id, 'responded', e); setSelected((s) => ({ ...s, status: 'responded' })); }}
-                    className="text-green-600 hover:bg-green-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-green-200">
-                    Mark Responded
-                  </button>
+                  <Tooltip text="Mark Responded">
+                    <button onClick={(e) => { updateStatus(selected.id, 'responded', e); setSelected((s) => ({ ...s, status: 'responded' })); }}
+                      className="p-2 text-green-600 hover:bg-green-50 rounded-lg border border-green-200">
+                      <CheckCircle className="w-4 h-4" />
+                    </button>
+                  </Tooltip>
                 )}
-                <button onClick={(e) => handleDelete(selected.id, e)}
-                  className="text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-red-200 flex items-center gap-1 ml-auto">
-                  <Trash2 className="w-3.5 h-3.5" /> Delete
-                </button>
-                <button onClick={(e) => handleArchive(selected.id, e)}
-                  className="text-amber-600 hover:bg-amber-50 px-3 py-1.5 rounded-lg text-xs font-medium border border-amber-200 flex items-center gap-1">
-                  <Archive className="w-3.5 h-3.5" /> Archive
-                </button>
+                <div className="ml-auto flex items-center gap-1.5">
+                  <Tooltip text="Delete">
+                    <button onClick={(e) => handleDelete(selected.id, e)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg border border-red-200">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip text="Archive">
+                    <button onClick={(e) => handleArchive(selected.id, e)}
+                      className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg border border-amber-200">
+                      <Archive className="w-4 h-4" />
+                    </button>
+                  </Tooltip>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

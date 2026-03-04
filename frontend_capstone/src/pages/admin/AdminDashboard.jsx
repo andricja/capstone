@@ -92,7 +92,7 @@ export default function AdminDashboard() {
 
       {/* Row 1: Rental Requests (bar) + Revenue (line) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Rental Requests</h2>
           {rentalChart.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Revenue</h2>
           {revenueChart.some((m) => m.revenue > 0) ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -133,7 +133,7 @@ export default function AdminDashboard() {
 
       {/* Row 2: User Registrations (bar) + Top Equipment Revenue (horizontal bar) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} User Registrations</h2>
           {usersChart.some((u) => u.renters > 0 || u.owners > 0) ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Top Equipment by Revenue</h2>
           {topEquipment.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
 
       {/* Row 3: Equipment Status (pie) + Rental Status (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Equipment Status</h2>
           {equipmentStatusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Rental Request Status</h2>
           {rentalStatusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -213,7 +213,7 @@ export default function AdminDashboard() {
 
       {/* Row 4: Category Distribution (pie) + Payment Methods (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Equipment by Category</h2>
           {categoryDistribution.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Payment Methods</h2>
           {paymentData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -278,7 +278,7 @@ function StatCard({ icon, label, value, color = 'green' }) {
     purple: 'border-l-purple-500', red: 'border-l-red-500', yellow: 'border-l-yellow-500',
   };
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${borderColors[color] || borderColors.green} p-4 text-center transition-colors`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${borderColors[color] || borderColors.green} p-4 text-center transition-colors`}>
       <div className="text-xl text-gray-400 dark:text-gray-500 flex justify-center mb-1">{icon}</div>
       <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
       <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>

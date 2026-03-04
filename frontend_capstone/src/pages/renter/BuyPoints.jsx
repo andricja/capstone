@@ -56,7 +56,7 @@ export default function BuyPoints() {
       <p className="text-gray-500 dark:text-gray-400 mb-6">Current balance: <span className="font-bold text-yellow-600">{user.points} points</span></p>
 
       {/* Purchase form */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6 mb-8 transition-colors">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-6 mb-8 transition-colors">
         <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Purchase Points</h2>
         <div className="bg-blue-50 rounded-lg p-4 mb-4 text-sm text-blue-800">
           <p><strong>Rate:</strong> ₱20 per point</p>
@@ -89,7 +89,7 @@ export default function BuyPoints() {
       </div>
 
       {/* Request history */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
         <div className="px-6 py-4 border-b dark:border-gray-700">
           <h2 className="font-semibold text-gray-900 dark:text-white">Points Request History</h2>
         </div>

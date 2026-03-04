@@ -108,7 +108,7 @@ export default function LandingPage() {
             </button>
             <button
               onClick={openRegister}
-              className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-8 py-3.5 rounded-full text-base font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border border-gray-200 dark:border-gray-600 flex items-center gap-2"
+              className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-8 py-3.5 rounded-full text-base font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border border-green-200 dark:border-green-600 flex items-center gap-2"
             >
               List Your Equipment <ChevronRight className="w-5 h-5" />
             </button>
@@ -239,7 +239,7 @@ export default function LandingPage() {
 
 function FeatureCard({ icon, title, desc }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md border border-green-200 dark:border-green-700 hover:shadow-lg transition-shadow">
       <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-4">
         {icon}
       </div>

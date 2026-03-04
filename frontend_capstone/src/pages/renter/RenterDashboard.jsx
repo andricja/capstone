@@ -83,7 +83,7 @@ export default function RenterDashboard() {
 
       {/* Row 1: Rental Requests (bar) + Spending (line) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Rental Requests</h2>
           {rentalChart.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -103,7 +103,7 @@ export default function RenterDashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Spending</h2>
           {spendingChart.some((m) => m.spending > 0) ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -124,7 +124,7 @@ export default function RenterDashboard() {
 
       {/* Row 2: Top Equipment (horizontal bar) + Rental Status (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Top Equipment by Spending</h2>
           {topEquipment.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -143,7 +143,7 @@ export default function RenterDashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Rental Request Status</h2>
           {rentalStatusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -164,7 +164,7 @@ export default function RenterDashboard() {
 
       {/* Row 3: Category Distribution (pie) + Payment Methods (pie) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Equipment Categories Rented</h2>
           {categoryDistribution.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -182,7 +182,7 @@ export default function RenterDashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 p-5 transition-colors">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-4">{periodLabels[period]} Payment Methods</h2>
           {paymentData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
@@ -203,7 +203,7 @@ export default function RenterDashboard() {
 
       {/* Recent rentals */}
       {data?.recent_rentals?.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 transition-colors">
           <div className="px-6 py-4 border-b dark:border-gray-700">
             <h2 className="font-semibold text-gray-900 dark:text-white">Recent Rentals</h2>
           </div>
@@ -233,7 +233,7 @@ function StatCard({ icon, label, value, color }) {
   };
   const c = colors[color] || colors.green;
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${c.border} p-5 transition-colors`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${c.border} p-5 transition-colors`}>
       <div className={`inline-flex p-2 rounded-lg text-xl ${c.bg}`}>{icon}</div>
       <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{value}</p>
       <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
