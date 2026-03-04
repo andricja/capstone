@@ -37,10 +37,10 @@ export default function Sidebar() {
     <>
       {/* ═══════ Top Header Bar (always visible) ═══════ */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 ${HEADER_H} bg-green-800 dark:bg-gray-800 text-white flex items-center shadow-sm transition-colors`}
+        className={`fixed top-0 left-0 right-0 z-50 ${HEADER_H} bg-gradient-to-r from-green-800 to-emerald-800 md:from-white md:to-white dark:from-gray-900 dark:to-gray-900 text-white md:text-gray-900 dark:text-white flex items-center shadow-sm md:border-b md:border-gray-200 dark:border-gray-800 transition-colors`}
       >
         {/* Logo area — matches sidebar width on desktop */}
-        <div className="flex items-center gap-2 px-4 md:w-64 md:px-5 shrink-0 md:border-r md:border-green-700 md:dark:border-gray-700 self-stretch">
+        <div className="flex items-center gap-2 px-4 md:w-64 md:px-5 shrink-0 md:bg-gradient-to-r md:from-green-800 md:to-emerald-800 dark:from-gray-800 dark:to-gray-800 self-stretch">
           <button
             onClick={() => setOpen(!open)}
             className="md:hidden text-white hover:text-green-200 mr-1"
@@ -56,9 +56,9 @@ export default function Sidebar() {
         {/* Center: breadcrumb (desktop) */}
         <div className="flex-1 flex items-center px-4">
           <nav className="hidden md:flex items-center gap-1.5 text-sm">
-            <span className="text-green-300 dark:text-gray-400">{roleLabel}</span>
-            <ChevronRight className="w-3.5 h-3.5 text-green-400 dark:text-gray-500" />
-            <span className="text-white font-semibold">{pageTitle}</span>
+            <span className="text-gray-500 dark:text-gray-400">{roleLabel}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+            <span className="text-gray-900 dark:text-white font-semibold">{pageTitle}</span>
           </nav>
         </div>
 
@@ -67,19 +67,19 @@ export default function Sidebar() {
           {/* Dark mode toggle */}
           <button
             onClick={toggle}
-            className="p-1.5 rounded-lg hover:bg-green-700 dark:hover:bg-gray-700 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-white/20 md:hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {dark ? <Sun className="w-5 h-5 text-yellow-300" /> : <Moon className="w-5 h-5 text-green-200" />}
+            {dark ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-white/80 md:text-gray-500" />}
           </button>
 
           {user && (
             <>
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-white leading-tight">{user.name}</p>
-                <p className="text-xs text-green-300 dark:text-gray-400 capitalize">{user.role}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white leading-tight">{user.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user.role}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-green-600 dark:bg-gray-600 text-white flex items-center justify-center text-sm font-bold">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 dark:from-gray-600 dark:to-gray-700 text-white flex items-center justify-center text-sm font-bold shadow-sm">
                 {user.name?.charAt(0).toUpperCase()}
               </div>
             </>
@@ -94,7 +94,7 @@ export default function Sidebar() {
 
       {/* ═══════ Sidebar (below header) ═══════ */}
       <aside
-        className={`fixed left-0 z-40 w-64 bg-green-800 dark:bg-gray-800 text-white flex flex-col transition-all duration-200 ease-in-out
+        className={`fixed left-0 z-40 w-64 bg-gradient-to-b from-green-800 via-green-800 to-emerald-900 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 text-white flex flex-col transition-all duration-200 ease-in-out
           ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         style={{ top: HEADER_PX, height: `calc(100vh - ${HEADER_PX})` }}
       >
@@ -107,8 +107,8 @@ export default function Sidebar() {
               onClick={() => setOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive(link.to)
-                  ? 'bg-green-600 dark:bg-green-700 text-white shadow-sm'
-                  : 'text-green-100 dark:text-gray-300 hover:bg-green-700 dark:hover:bg-gray-700'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-500 dark:from-green-700 dark:to-green-700 text-white shadow-sm'
+                  : 'text-green-100 dark:text-gray-300 hover:bg-green-700/80 dark:hover:bg-gray-700'
               }`}
             >
               <span className="text-lg">{link.icon}</span>

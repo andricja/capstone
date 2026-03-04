@@ -218,7 +218,7 @@ export default function DataTable({
                 onClick={() => setPage(n)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                   n === safePage
-                    ? 'bg-green-600 text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-sm'
                     : 'border dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >

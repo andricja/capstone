@@ -125,11 +125,11 @@ export default function AdminOwners() {
   ];
 
   const colorMap = {
-    green:   { bg: 'bg-green-50 dark:bg-green-900/20',   text: 'text-green-600 dark:text-green-400',   ring: 'ring-green-200 dark:ring-green-800',   border: 'border-l-green-500' },
-    blue:    { bg: 'bg-blue-50 dark:bg-blue-900/20',    text: 'text-blue-600 dark:text-blue-400',    ring: 'ring-blue-200 dark:ring-blue-800',    border: 'border-l-blue-500' },
-    amber:   { bg: 'bg-amber-50 dark:bg-amber-900/20',   text: 'text-amber-600 dark:text-amber-400',   ring: 'ring-amber-200 dark:ring-amber-800',   border: 'border-l-amber-500' },
-    purple:  { bg: 'bg-purple-50 dark:bg-purple-900/20',  text: 'text-purple-600 dark:text-purple-400',  ring: 'ring-purple-200 dark:ring-purple-800',  border: 'border-l-purple-500' },
-    emerald: { bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-600 dark:text-emerald-400', ring: 'ring-emerald-200 dark:ring-emerald-800', border: 'border-l-emerald-500' },
+    green:   { bg: 'bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-900/40',   text: 'text-green-600 dark:text-green-400',   ring: 'ring-green-200 dark:ring-green-800',   border: 'border-l-green-500' },
+    blue:    { bg: 'bg-gradient-to-br from-blue-100 to-cyan-200 dark:from-blue-900/30 dark:to-cyan-900/40',    text: 'text-blue-600 dark:text-blue-400',    ring: 'ring-blue-200 dark:ring-blue-800',    border: 'border-l-blue-500' },
+    amber:   { bg: 'bg-gradient-to-br from-amber-100 to-yellow-200 dark:from-amber-900/30 dark:to-yellow-900/40',   text: 'text-amber-600 dark:text-amber-400',   ring: 'ring-amber-200 dark:ring-amber-800',   border: 'border-l-amber-500' },
+    purple:  { bg: 'bg-gradient-to-br from-purple-100 to-fuchsia-200 dark:from-purple-900/30 dark:to-fuchsia-900/40',  text: 'text-purple-600 dark:text-purple-400',  ring: 'ring-purple-200 dark:ring-purple-800',  border: 'border-l-purple-500' },
+    emerald: { bg: 'bg-gradient-to-br from-emerald-100 to-teal-200 dark:from-emerald-900/30 dark:to-teal-900/40', text: 'text-emerald-600 dark:text-emerald-400', ring: 'ring-emerald-200 dark:ring-emerald-800', border: 'border-l-emerald-500' },
   };
 
   return (
@@ -137,7 +137,7 @@ export default function AdminOwners() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6 flex-wrap">
         <Users className="w-7 h-7 text-green-600" />
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Equipment Owners</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">Equipment Owners</h1>
         <span className="text-sm text-gray-500 dark:text-gray-400">{data.length} total owners</span>
 
         {/* Toggle buttons */}
@@ -172,7 +172,7 @@ export default function AdminOwners() {
         {statCards.map((card) => {
           const c = colorMap[card.color];
           return (
-            <div key={card.label} className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${c.border} p-4 flex items-center gap-3 transition-colors`}>
+            <div key={card.label} className={`bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${c.border} p-4 flex items-center gap-3 transition-colors`}>
               <div className={`${c.bg} ${c.text} p-2.5 rounded-lg ring-1 ${c.ring}`}>
                 {card.icon}
               </div>
@@ -198,7 +198,7 @@ export default function AdminOwners() {
             >
               {/* Avatar + Name */}
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-lg">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center text-green-700 font-bold text-lg">
                   {owner.name?.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
@@ -212,12 +212,12 @@ export default function AdminOwners() {
 
               {/* Stats row */}
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 text-center">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/30 rounded-lg px-3 py-2 text-center">
                   <Tractor className="w-4 h-4 text-green-600 mx-auto mb-1" />
                   <span className="font-semibold text-green-700 dark:text-green-400">{owner.equipment_count ?? 0}</span>
                   <p className="text-gray-500 dark:text-gray-400 text-xs">Equipment</p>
                 </div>
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 text-center">
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/30 rounded-lg px-3 py-2 text-center">
                   <Tractor className="w-4 h-4 text-blue-600 mx-auto mb-1" />
                   <span className="font-semibold text-blue-700 dark:text-blue-400">{owner.approved_equipment_count ?? 0}</span>
                   <p className="text-gray-500 dark:text-gray-400 text-xs">Approved</p>
@@ -425,7 +425,7 @@ export default function AdminOwners() {
                   Cancel
                 </button>
                 <button type="submit" disabled={submitting}
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg transition-colors flex items-center gap-2">
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 disabled:opacity-50 rounded-lg transition-colors flex items-center gap-2">
                   {submitting ? (
                     <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> Saving...</>
                   ) : (
@@ -467,19 +467,19 @@ export default function AdminOwners() {
 
                 {/* Owner stats */}
                 <div className="px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/30 rounded-lg p-3 text-center">
                     <p className="text-xl font-bold text-green-700 dark:text-green-400">{detailOwner.owner.equipment_count ?? 0}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Total Equipment</p>
                   </div>
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-center">
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/30 rounded-lg p-3 text-center">
                     <p className="text-xl font-bold text-blue-700 dark:text-blue-400">{detailOwner.owner.approved_equipment_count ?? 0}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Approved</p>
                   </div>
-                  <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 text-center">
+                  <div className="bg-gradient-to-br from-purple-50 to-fuchsia-100 dark:from-purple-900/20 dark:to-fuchsia-900/30 rounded-lg p-3 text-center">
                     <p className="text-xl font-bold text-purple-700 dark:text-purple-400">{detailOwner.active_rentals}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Active Rentals</p>
                   </div>
-                  <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 text-center">
+                  <div className="bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-900/30 rounded-lg p-3 text-center">
                     <p className="text-xl font-bold text-amber-700 dark:text-amber-400">₱{Number(detailOwner.total_revenue).toLocaleString()}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Total Revenue</p>
                   </div>

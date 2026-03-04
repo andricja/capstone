@@ -50,7 +50,7 @@ export default function RenterDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Renter Dashboard</h1>
+      <h1 className="text-2xl font-bold text-white dark:text-white mb-6">Renter Dashboard</h1>
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
@@ -72,7 +72,7 @@ export default function RenterDashboard() {
             onClick={() => setPeriod(p)}
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
               period === p
-                ? 'bg-green-600 text-white shadow-sm'
+                ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-sm'
                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
@@ -226,14 +226,14 @@ export default function RenterDashboard() {
 
 function StatCard({ icon, label, value, color }) {
   const colors = {
-    yellow: { bg: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400', border: 'border-l-yellow-500' },
-    blue:   { bg: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',     border: 'border-l-blue-500' },
-    green:  { bg: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400',   border: 'border-l-green-500' },
-    purple: { bg: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400', border: 'border-l-purple-500' },
+    yellow: { bg: 'bg-gradient-to-br from-yellow-100 to-amber-200 text-yellow-600 dark:from-yellow-900/30 dark:to-amber-900/40 dark:text-yellow-400', border: 'border-l-yellow-500' },
+    blue:   { bg: 'bg-gradient-to-br from-blue-100 to-cyan-200 text-blue-600 dark:from-blue-900/30 dark:to-cyan-900/40 dark:text-blue-400',     border: 'border-l-blue-500' },
+    green:  { bg: 'bg-gradient-to-br from-green-100 to-emerald-200 text-green-600 dark:from-green-900/30 dark:to-emerald-900/40 dark:text-green-400',   border: 'border-l-green-500' },
+    purple: { bg: 'bg-gradient-to-br from-purple-100 to-fuchsia-200 text-purple-600 dark:from-purple-900/30 dark:to-fuchsia-900/40 dark:text-purple-400', border: 'border-l-purple-500' },
   };
   const c = colors[color] || colors.green;
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${c.border} p-5 transition-colors`}>
+    <div className={`bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${c.border} p-5 transition-colors`}>
       <div className={`inline-flex p-2 rounded-lg text-xl ${c.bg}`}>{icon}</div>
       <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{value}</p>
       <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>

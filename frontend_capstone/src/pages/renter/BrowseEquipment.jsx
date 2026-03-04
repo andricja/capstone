@@ -157,7 +157,7 @@ export default function BrowseEquipment() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Browse Equipment</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">Browse Equipment</h1>
         <button
           onClick={() => { setViewMode(viewMode === 'card' ? 'table' : 'card'); setPage(1); }}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
@@ -182,7 +182,7 @@ export default function BrowseEquipment() {
             {CATEGORIES.map((c) => <option key={c} value={c}>{c ? c.charAt(0).toUpperCase() + c.slice(1) : 'All Categories'}</option>)}
           </select>
         </div>
-        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
+        <button type="submit" className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-green-700 hover:to-emerald-600 flex items-center gap-1">
           <Search className="w-4 h-4" /> Filter
         </button>
       </form>
@@ -218,7 +218,7 @@ export default function BrowseEquipment() {
                   </div>
                   {eq.status === 'available' && (
                     <button onClick={() => openRentalModal(eq)}
-                      className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-green-700">
+                      className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:from-green-700 hover:to-emerald-600">
                       Request Rental
                     </button>
                   )}
@@ -300,7 +300,7 @@ export default function BrowseEquipment() {
                     <td className="px-4 py-3">
                       {eq.status === 'available' ? (
                         <button onClick={() => openRentalModal(eq)}
-                          className="px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
+                          className="px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-green-600 to-emerald-500 rounded-lg hover:from-green-700 hover:to-emerald-600">
                           Request Rental
                         </button>
                       ) : (
@@ -321,7 +321,7 @@ export default function BrowseEquipment() {
                 className="px-3 py-1 rounded border text-sm disabled:opacity-40 hover:bg-gray-50">Prev</button>
               {Array.from({ length: totalPages }, (_, i) => (
                 <button key={i + 1} onClick={() => setPage(i + 1)}
-                  className={`px-3 py-1 rounded border text-sm ${page === i + 1 ? 'bg-green-600 text-white border-green-600' : 'hover:bg-gray-50'}`}>
+                  className={`px-3 py-1 rounded border text-sm ${page === i + 1 ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white border-green-600' : 'hover:bg-gray-50'}`}>
                   {i + 1}
                 </button>
               ))}
@@ -356,7 +356,7 @@ export default function BrowseEquipment() {
 
               {/* Auto-calculated estimates — shown when farm_size_sqm is valid */}
               {costBreakdown && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex gap-4">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3 flex gap-4">
                   <div className="flex-1 text-center">
                     <Clock className="w-4 h-4 mx-auto text-green-600 mb-1" />
                     <p className="text-lg font-bold text-green-700">{costBreakdown.estimatedHours}</p>
@@ -532,7 +532,7 @@ export default function BrowseEquipment() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setSelected(null)} className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
-                <button type="submit" disabled={submitting || !costBreakdown || (rentalForm.payment_method === 'gcash' && !paymentProofFile)} className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50">
+                <button type="submit" disabled={submitting || !costBreakdown || (rentalForm.payment_method === 'gcash' && !paymentProofFile)} className="flex-1 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-green-700 hover:to-emerald-600 disabled:opacity-50">
                   {submitting ? 'Submitting...' : 'Confirm Booking'}
                 </button>
               </div>

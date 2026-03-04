@@ -260,7 +260,7 @@ export default function AccountSettings() {
       {/* Header */}
       <div className="flex items-center gap-3">
         <Settings className="w-7 h-7 text-green-600 dark:text-green-400" />
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">Account Settings</h1>
       </div>
 
       {/* Tabs */}
@@ -322,7 +322,7 @@ export default function AccountSettings() {
               <button
                 type="submit"
                 disabled={profileLoading}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 {profileLoading ? 'Saving...' : 'Save Changes'}
@@ -403,7 +403,7 @@ export default function AccountSettings() {
               <button
                 type="submit"
                 disabled={passwordLoading}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
               >
                 <Lock className="w-4 h-4" />
                 {passwordLoading ? 'Updating...' : 'Update Password'}
@@ -473,7 +473,7 @@ export default function AccountSettings() {
                 <button
                   type="submit"
                   disabled={gcashSaving}
-                  className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {gcashSaving ? (
                     <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> Saving...</>
@@ -703,7 +703,7 @@ export default function AccountSettings() {
                 <button
                   type="submit"
                   disabled={smtpSaving}
-                  className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {smtpSaving ? (
                     <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> Saving...</>

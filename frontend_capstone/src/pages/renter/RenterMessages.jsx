@@ -55,7 +55,7 @@ export default function RenterMessages() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Contact Us</h1>
+      <h1 className="text-2xl font-bold text-white dark:text-white mb-6">Contact Us</h1>
 
       {feedback && (
         <div className={`mb-4 px-4 py-3 rounded-lg text-sm ${feedback.includes('Failed') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
@@ -89,7 +89,7 @@ export default function RenterMessages() {
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none dark:bg-gray-700 dark:text-gray-200 resize-none" />
             </div>
             <button type="submit" disabled={submitting}
-              className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50">
+              className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 disabled:opacity-50">
               {submitting ? 'Sending...' : 'Send Inquiry'}
             </button>
           </form>

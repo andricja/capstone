@@ -117,7 +117,7 @@ export default function AdminRentals() {
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <ClipboardList className="w-7 h-7 text-green-600" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">All Rental Requests</h1>
+          <h1 className="text-2xl font-bold text-white dark:text-white">All Rental Requests</h1>
         </div>
 
         {/* Filter tabs */}

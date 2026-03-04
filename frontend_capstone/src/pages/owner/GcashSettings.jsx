@@ -43,7 +43,7 @@ export default function GcashSettings() {
 
   return (
     <div className="max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">GCash Settings</h1>
+      <h1 className="text-2xl font-bold text-white dark:text-white mb-6">GCash Settings</h1>
 
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6 text-sm text-blue-800 dark:text-blue-300">
         <p>These details will be shown to renters when they pay via GCash. Payments go directly to your GCash account.</p>
@@ -77,7 +77,7 @@ export default function GcashSettings() {
               className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
           </div>
           <button type="submit" disabled={submitting}
-            className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50">
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 disabled:opacity-50">
             {submitting ? 'Saving...' : 'Save GCash Settings'}
           </button>
         </form>

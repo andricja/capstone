@@ -214,7 +214,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
               </div>
 
               <button type="submit" disabled={loading}
-                className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50">
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 transition-colors disabled:opacity-50">
                 {loading ? 'Creating account...' : 'Create Account'}
               </button>
             </form>
@@ -272,7 +272,7 @@ export default function RegisterModal({ open, onClose, onSwitchToLogin, onVerify
                 <button
                   type="submit"
                   disabled={verifyLoading || code.join('').length !== 6}
-                  className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 transition-colors disabled:opacity-50"
                 >
                   {verifyLoading ? 'Verifying...' : 'Verify Email'}
                 </button>

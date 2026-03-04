@@ -110,7 +110,7 @@ export default function OwnerRentals() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Rental Requests</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">Rental Requests</h1>
         <button
           onClick={() => { setViewMode(viewMode === 'card' ? 'table' : 'card'); setPage(1); }}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
@@ -132,10 +132,10 @@ export default function OwnerRentals() {
             onClick={() => { setStatusFilter(f.key); setPage(1); }}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               statusFilter === f.key
-                ? f.key === 'approved' ? 'bg-green-600 text-white shadow-sm'
+                ? f.key === 'approved' ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-sm'
                   : f.key === 'rejected' ? 'bg-red-500 text-white shadow-sm'
                   : f.key === 'forwarded' ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-green-600 text-white shadow-sm'
+                  : 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-sm'
                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
@@ -174,7 +174,7 @@ export default function OwnerRentals() {
               </div>
 
               {/* Farm & Rental Details */}
-              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-4">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4 mb-4">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Farm & Rental Details</h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                   <div className="flex items-start gap-1.5">
@@ -209,7 +209,7 @@ export default function OwnerRentals() {
               </div>
 
               {/* Delivery Details */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-4 mb-4">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Delivery Details</h4>
                 <div className="flex items-start gap-1.5 text-sm">
                   <Truck className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
@@ -264,7 +264,7 @@ export default function OwnerRentals() {
                   <>
                     <Tooltip text="Approve">
                       <button onClick={() => handleAction(r.id, 'approve')}
-                        className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        className="p-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg hover:from-green-700 hover:to-emerald-600 transition-colors">
                         <Check className="w-4 h-4" />
                       </button>
                     </Tooltip>
@@ -359,7 +359,7 @@ export default function OwnerRentals() {
                           <>
                             <Tooltip text="Approve">
                               <button onClick={(e) => { e.stopPropagation(); handleAction(r.id, 'approve'); }}
-                                className="p-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                                className="p-1.5 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded hover:from-green-700 hover:to-emerald-600 transition-colors">
                                 <Check className="w-3.5 h-3.5" />
                               </button>
                             </Tooltip>
@@ -393,7 +393,7 @@ export default function OwnerRentals() {
                 className="px-3 py-1 rounded border dark:border-gray-600 text-sm disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300">Prev</button>
               {Array.from({ length: totalPages }, (_, i) => (
                 <button key={i + 1} onClick={() => setPage(i + 1)}
-                  className={`px-3 py-1 rounded border dark:border-gray-600 text-sm ${page === i + 1 ? 'bg-green-600 text-white border-green-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300'}`}>
+                  className={`px-3 py-1 rounded border dark:border-gray-600 text-sm ${page === i + 1 ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white border-green-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300'}`}>
                   {i + 1}
                 </button>
               ))}
@@ -448,7 +448,7 @@ export default function OwnerRentals() {
               </div>
 
               {/* Farm & Rental Details */}
-              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-4">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4 mb-4">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Farm & Rental Details</h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                   <div className="flex items-start gap-1.5">
@@ -483,7 +483,7 @@ export default function OwnerRentals() {
               </div>
 
               {/* Delivery Details */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-4 mb-4">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Delivery Details</h4>
                 <div className="flex items-start gap-1.5 text-sm">
                   <Truck className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
@@ -538,7 +538,7 @@ export default function OwnerRentals() {
                   <>
                     <Tooltip text="Approve">
                       <button onClick={() => { handleAction(selectedRow.id, 'approve'); setSelectedRow(null); }}
-                        className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        className="p-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg hover:from-green-700 hover:to-emerald-600 transition-colors">
                         <Check className="w-4 h-4" />
                       </button>
                     </Tooltip>

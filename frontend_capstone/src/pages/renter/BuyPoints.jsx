@@ -52,7 +52,7 @@ export default function BuyPoints() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Buy Points</h1>
+      <h1 className="text-2xl font-bold text-white dark:text-white mb-2">Buy Points</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-6">Current balance: <span className="font-bold text-yellow-600">{user.points} points</span></p>
 
       {/* Purchase form */}
@@ -82,7 +82,7 @@ export default function BuyPoints() {
               className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
           </div>
           <button type="submit" disabled={submitting}
-            className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50">
+            className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 disabled:opacity-50">
             {submitting ? 'Submitting...' : 'Submit Points Request'}
           </button>
         </form>

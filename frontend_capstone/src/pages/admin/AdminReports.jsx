@@ -112,10 +112,10 @@ export default function AdminReports() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <BarChart3 className="w-7 h-7 text-green-600" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Revenue Reports</h1>
+          <h1 className="text-2xl font-bold text-white dark:text-white">Revenue Reports</h1>
         </div>
         <button onClick={handleExportCsv}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
+          className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-green-700 hover:to-emerald-600 flex items-center gap-1">
           <Download className="w-4 h-4" /> Export CSV
         </button>
       </div>
@@ -147,14 +147,14 @@ export default function AdminReports() {
             </div>
           </>
         )}
-        <button onClick={handleFilter} className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700">Apply</button>
+        <button onClick={handleFilter} className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-green-700 hover:to-emerald-600">Apply</button>
       </div>
 
       {/* Summary */}
       {data?.summary && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-green-500 p-5 flex items-center gap-4 transition-colors">
-            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+          <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-green-500 p-5 flex items-center gap-4 transition-colors">
+            <div className="bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-900/40 p-3 rounded-lg">
               <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
             <div>
@@ -162,8 +162,8 @@ export default function AdminReports() {
               <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-blue-500 p-5 flex items-center gap-4 transition-colors">
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+          <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-blue-500 p-5 flex items-center gap-4 transition-colors">
+            <div className="bg-gradient-to-br from-blue-100 to-cyan-200 dark:from-blue-900/30 dark:to-cyan-900/40 p-3 rounded-lg">
               <Tractor className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
@@ -171,8 +171,8 @@ export default function AdminReports() {
               <p className="text-sm text-gray-500 dark:text-gray-400">Equipment Approved</p>
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-amber-500 p-5 flex items-center gap-4 transition-colors">
-            <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
+          <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 border-l-amber-500 p-5 flex items-center gap-4 transition-colors">
+            <div className="bg-gradient-to-br from-amber-100 to-yellow-200 dark:from-amber-900/30 dark:to-yellow-900/40 p-3 rounded-lg">
               <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>

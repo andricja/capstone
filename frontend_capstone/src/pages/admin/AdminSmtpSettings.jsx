@@ -86,7 +86,7 @@ export default function AdminSmtpSettings() {
       <div className="flex items-center gap-3 mb-6">
         <Server className="w-7 h-7 text-green-600" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Email (SMTP) Settings</h1>
+          <h1 className="text-2xl font-bold text-white dark:text-white">Email (SMTP) Settings</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">Configure email delivery for verification and notification emails</p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function AdminSmtpSettings() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {saving ? (
             <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> Saving...</>

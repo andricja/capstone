@@ -220,7 +220,7 @@ export default function AdminEquipment() {
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <ListFilter className="w-7 h-7 text-green-600" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Equipment Approvals</h1>
+          <h1 className="text-2xl font-bold text-white dark:text-white">Equipment Approvals</h1>
         </div>
 
         {/* Filter tabs */}
@@ -259,7 +259,7 @@ export default function AdminEquipment() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setApproveItem(null)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
-            <div className="bg-green-50 dark:bg-green-900/20 px-6 py-4 border-b dark:border-gray-700 flex items-center gap-3">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 px-6 py-4 border-b dark:border-gray-700 flex items-center gap-3">
               <div className="bg-green-100 p-2 rounded-lg">
                 <DollarSign className="w-5 h-5 text-green-600" />
               </div>
@@ -325,7 +325,7 @@ export default function AdminEquipment() {
               <button
                 onClick={confirmApprove}
                 disabled={!approvalFee || parseFloat(approvalFee) < 0 || approving}
-                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-500 rounded-lg hover:from-green-700 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
               >
                 {approving ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

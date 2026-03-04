@@ -91,10 +91,10 @@ export default function AdminAccounts() {
   };
 
   const statCards = [
-    { label: 'Pending Verification', value: stats?.pending ?? 0, icon: <Clock className="w-5 h-5" />, color: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 ring-yellow-200 dark:ring-yellow-800', border: 'border-l-yellow-500' },
-    { label: 'Awaiting Approval', value: stats?.email_verified ?? 0, icon: <Mail className="w-5 h-5" />, color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 ring-blue-200 dark:ring-blue-800', border: 'border-l-blue-500' },
-    { label: 'Approved', value: stats?.approved ?? 0, icon: <ShieldCheck className="w-5 h-5" />, color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 ring-green-200 dark:ring-green-800', border: 'border-l-green-500' },
-    { label: 'Rejected', value: stats?.rejected ?? 0, icon: <ShieldX className="w-5 h-5" />, color: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 ring-red-200 dark:ring-red-800', border: 'border-l-red-500' },
+    { label: 'Pending Verification', value: stats?.pending ?? 0, icon: <Clock className="w-5 h-5" />, color: 'bg-gradient-to-br from-yellow-100 to-amber-200 dark:from-yellow-900/30 dark:to-amber-900/40 text-yellow-600 dark:text-yellow-400 ring-yellow-200 dark:ring-yellow-800', border: 'border-l-yellow-500' },
+    { label: 'Awaiting Approval', value: stats?.email_verified ?? 0, icon: <Mail className="w-5 h-5" />, color: 'bg-gradient-to-br from-blue-100 to-cyan-200 dark:from-blue-900/30 dark:to-cyan-900/40 text-blue-600 dark:text-blue-400 ring-blue-200 dark:ring-blue-800', border: 'border-l-blue-500' },
+    { label: 'Approved', value: stats?.approved ?? 0, icon: <ShieldCheck className="w-5 h-5" />, color: 'bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-900/40 text-green-600 dark:text-green-400 ring-green-200 dark:ring-green-800', border: 'border-l-green-500' },
+    { label: 'Rejected', value: stats?.rejected ?? 0, icon: <ShieldX className="w-5 h-5" />, color: 'bg-gradient-to-br from-red-100 to-rose-200 dark:from-red-900/30 dark:to-rose-900/40 text-red-600 dark:text-red-400 ring-red-200 dark:ring-red-800', border: 'border-l-red-500' },
   ];
 
   const columns = [
@@ -177,13 +177,13 @@ export default function AdminAccounts() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <Users className="w-7 h-7 text-green-600" />
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Management</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">Account Management</h1>
       </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {statCards.map((card) => (
-          <div key={card.label} className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${card.border} p-4 flex items-center gap-3 transition-colors`}>
+          <div key={card.label} className={`bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${card.border} p-4 flex items-center gap-3 transition-colors`}>
             <div className={`${card.color} p-2.5 rounded-lg ring-1`}>
               {card.icon}
             </div>
@@ -209,7 +209,7 @@ export default function AdminAccounts() {
             onClick={() => setFilter(btn.value)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
               filter === btn.value
-                ? 'bg-green-600 text-white border-green-600'
+                ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white border-green-600'
                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >

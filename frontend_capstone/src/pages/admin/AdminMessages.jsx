@@ -151,7 +151,7 @@ export default function AdminMessages() {
     <div>
       <div className="flex items-center gap-3 mb-4">
         <MessageSquare className="w-7 h-7 text-green-600" />
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Message Requests</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">Message Requests</h1>
       </div>
 
       <div className="flex items-center gap-2 mb-6 flex-wrap">
@@ -166,7 +166,7 @@ export default function AdminMessages() {
             onClick={() => setFilter(btn.value)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
               filter === btn.value
-                ? 'bg-green-600 text-white border-green-600'
+                ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white border-green-600'
                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >

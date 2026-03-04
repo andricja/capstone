@@ -93,7 +93,7 @@ export default function MyRentals() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Rentals</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">My Rentals</h1>
         <button
           onClick={() => { setViewMode(viewMode === 'card' ? 'table' : 'card'); setPage(1); }}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
@@ -115,10 +115,10 @@ export default function MyRentals() {
             onClick={() => { setStatusFilter(f.key); setPage(1); }}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               statusFilter === f.key
-                ? f.key === 'approved' ? 'bg-green-600 text-white shadow-sm'
+                ? f.key === 'approved' ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-sm'
                   : f.key === 'rejected' ? 'bg-red-500 text-white shadow-sm'
                   : f.key === 'forwarded' ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-green-600 text-white shadow-sm'
+                  : 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-sm'
                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
@@ -290,7 +290,7 @@ export default function MyRentals() {
                 className="px-3 py-1 rounded border text-sm disabled:opacity-40 hover:bg-gray-50">Prev</button>
               {Array.from({ length: totalPages }, (_, i) => (
                 <button key={i + 1} onClick={() => setPage(i + 1)}
-                  className={`px-3 py-1 rounded border text-sm ${page === i + 1 ? 'bg-green-600 text-white border-green-600' : 'hover:bg-gray-50'}`}>
+                  className={`px-3 py-1 rounded border text-sm ${page === i + 1 ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white border-green-600' : 'hover:bg-gray-50'}`}>
                   {i + 1}
                 </button>
               ))}

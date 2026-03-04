@@ -12,7 +12,7 @@ export default function Pagination({ data, onPageChange }) {
           onClick={() => onPageChange(page)}
           className={`px-3 py-1 text-sm rounded ${
             page === data.current_page
-              ? 'bg-green-600 text-white'
+              ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white'
               : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
           }`}
         >

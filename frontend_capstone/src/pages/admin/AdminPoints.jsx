@@ -40,7 +40,7 @@ export default function AdminPoints() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Points Requests</h1>
+        <h1 className="text-2xl font-bold text-white dark:text-white">Points Requests</h1>
         <select value={filter} onChange={(e) => { setFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
           <option value="">All</option>

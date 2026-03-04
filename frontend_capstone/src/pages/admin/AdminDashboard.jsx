@@ -58,7 +58,7 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Admin Dashboard</h1>
+      <h1 className="text-2xl font-bold text-white dark:text-white mb-6">Admin Dashboard</h1>
 
       {/* Overview stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
             onClick={() => setPeriod(p)}
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
               period === p
-                ? 'bg-green-600 text-white shadow-sm'
+                ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-sm'
                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
@@ -277,9 +277,19 @@ function StatCard({ icon, label, value, color = 'green' }) {
     green: 'border-l-green-500', blue: 'border-l-blue-500', amber: 'border-l-amber-500',
     purple: 'border-l-purple-500', red: 'border-l-red-500', yellow: 'border-l-yellow-500',
   };
+  const iconGradients = {
+    green: 'bg-gradient-to-br from-green-100 to-emerald-200 text-green-600 dark:from-green-900/30 dark:to-emerald-900/40 dark:text-green-400',
+    blue: 'bg-gradient-to-br from-blue-100 to-cyan-200 text-blue-600 dark:from-blue-900/30 dark:to-cyan-900/40 dark:text-blue-400',
+    amber: 'bg-gradient-to-br from-amber-100 to-yellow-200 text-amber-600 dark:from-amber-900/30 dark:to-yellow-900/40 dark:text-amber-400',
+    purple: 'bg-gradient-to-br from-purple-100 to-fuchsia-200 text-purple-600 dark:from-purple-900/30 dark:to-fuchsia-900/40 dark:text-purple-400',
+    red: 'bg-gradient-to-br from-red-100 to-rose-200 text-red-600 dark:from-red-900/30 dark:to-rose-900/40 dark:text-red-400',
+    yellow: 'bg-gradient-to-br from-yellow-100 to-amber-200 text-yellow-600 dark:from-yellow-900/30 dark:to-amber-900/40 dark:text-yellow-400',
+  };
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${borderColors[color] || borderColors.green} p-4 text-center transition-colors`}>
-      <div className="text-xl text-gray-400 dark:text-gray-500 flex justify-center mb-1">{icon}</div>
+    <div className={`bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800 rounded-xl shadow-md border border-green-200 dark:border-green-700 border-l-4 ${borderColors[color] || borderColors.green} p-4 text-center transition-colors`}>
+      <div className={`text-xl flex justify-center mb-1`}>
+        <span className={`inline-flex p-1.5 rounded-lg ${iconGradients[color] || iconGradients.green}`}>{icon}</span>
+      </div>
       <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
       <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
     </div>

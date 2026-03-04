@@ -120,8 +120,8 @@ export default function MyEquipment() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Equipment</h1>
-        <button onClick={openAdd} className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-1">
+        <h1 className="text-2xl font-bold text-white dark:text-white">My Equipment</h1>
+        <button onClick={openAdd} className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-green-700 hover:to-emerald-600 flex items-center gap-1">
           <Plus /> Add Equipment
         </button>
       </div>
@@ -257,7 +257,7 @@ export default function MyEquipment() {
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
-                <button type="submit" disabled={submitting} className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50">
+                <button type="submit" disabled={submitting} className="flex-1 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-green-700 hover:to-emerald-600 disabled:opacity-50">
                   {submitting ? 'Saving...' : editing ? 'Update Equipment' : 'Submit for Review'}
                 </button>
               </div>
